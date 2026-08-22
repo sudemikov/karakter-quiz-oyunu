@@ -32,7 +32,9 @@
       font-size: 1.3rem; font-weight: 800; color: var(--accent-gold);
       display: flex; align-items: center; gap: 8px;
       background: rgba(250, 204, 21, 0.1); padding: 8px 16px; border-radius: 20px;
+      transition: transform 0.15s;
     }
+    .coin-display.bump { transform: scale(1.12); }
 
     .container { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
 
@@ -40,11 +42,20 @@
 
     .section-title { font-size: 1.3rem; margin-bottom: 15px; color: var(--accent); display: flex; align-items: center; gap: 8px; }
 
-    /* --- Quiz Bölümü --- */
-    .quiz-box {
+    /* --- Kazanç Kutusu (Quiz + Oyun) --- */
+    .earn-box {
       background: var(--card-bg); padding: 25px; border-radius: 12px;
       margin-bottom: 25px; border: 1px solid var(--border);
     }
+
+    .mode-tabs { display: flex; gap: 8px; margin-bottom: 18px; border-bottom: 1px solid var(--border); }
+    .mode-tab {
+      background: transparent; border: none; color: var(--text-muted);
+      padding: 10px 6px; font-size: 0.95rem; font-weight: 700; cursor: pointer;
+      border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all 0.15s;
+    }
+    .mode-tab:hover { color: var(--text); }
+    .mode-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
 
     .quiz-header { display: flex; justify-content: space-between; font-size: 0.85rem; color: var(--accent); margin-bottom: 10px; text-transform: uppercase; font-weight: bold; }
     .quiz-question { font-size: 1.15rem; font-weight: 600; margin-bottom: 20px; line-height: 1.4; }
@@ -68,9 +79,35 @@
 
     .quiz-feedback { min-height: 24px; font-size: 0.95rem; font-weight: bold; margin-bottom: 12px; }
 
-    .next-btn {
+    .next-btn, .newgame-btn {
       background: var(--accent); color: #0f172a; border: none; font-weight: bold;
       padding: 10px 20px; border-radius: 6px; cursor: pointer; display: none;
+    }
+
+    /* --- Hafıza Oyunu --- */
+    .game-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; font-size: 0.9rem; color: var(--text-muted); }
+    .game-meta strong { color: var(--text); }
+
+    .memory-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 16px;
+    }
+    @media (max-width: 480px) { .memory-grid { grid-template-columns: repeat(3, 1fr); } }
+
+    .memory-card {
+      aspect-ratio: 1 / 1; border-radius: 10px; border: 1px solid var(--border);
+      background: var(--card-inner); display: flex; align-items: center; justify-content: center;
+      font-size: 1.8rem; cursor: pointer; user-select: none;
+      transition: transform 0.25s, background 0.2s, border-color 0.2s;
+    }
+    .memory-card:hover:not(.flipped):not(.matched) { border-color: var(--accent); }
+    .memory-card.flipped, .memory-card.matched { background: #263349; }
+    .memory-card.matched { border-color: var(--success); opacity: 0.75; cursor: default; }
+    .memory-card .face-down { color: var(--text-muted); font-size: 1.3rem; }
+
+    .game-result {
+      background: rgba(34, 197, 94, 0.12); border: 1px solid var(--success);
+      color: var(--success); padding: 12px 16px; border-radius: 8px; font-weight: bold;
+      margin-bottom: 14px; display: none;
     }
 
     /* --- Market Kartları --- */
@@ -83,6 +120,7 @@
       background: var(--card-bg); border-radius: 12px; overflow: hidden;
       border: 1px solid var(--border); display: flex; flex-direction: column;
       transition: transform 0.2s, border-color 0.2s;
+      position: relative;
     }
 
     .character-card:hover { transform: translateY(-4px); border-color: var(--accent); }
@@ -114,27 +152,69 @@
     .cart-item, .inventory-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
     .btn-checkout { background: var(--success); color: #0f172a; font-size: 1rem; }
     .btn-remove { background: none; border: none; color: var(--danger); cursor: pointer; font-size: 1.1rem; }
+
+    /* --- Toast bildirimleri --- */
+    #toast-stack {
+      position: fixed; top: 20px; right: 20px; display: flex; flex-direction: column;
+      gap: 10px; z-index: 999;
+    }
+    .toast {
+      background: var(--card-bg); border: 1px solid var(--border); border-left: 4px solid var(--accent);
+      color: var(--text); padding: 12px 16px; border-radius: 8px; font-size: 0.9rem;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.35);
+      animation: toast-in 0.2s ease-out, toast-out 0.3s ease-in 2.7s forwards;
+      max-width: 280px;
+    }
+    .toast.success { border-left-color: var(--success); }
+    .toast.error { border-left-color: var(--danger); }
+    @keyframes toast-in { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
+    @keyframes toast-out { to { opacity: 0; transform: translateX(20px); } }
   </style>
 </head>
 <body>
 
+  <div id="toast-stack"></div>
+
   <header>
     <h1>🏒 Karakter Koleksiyonu</h1>
-    <div class="coin-display">🪙 <span id="coin-counter">0</span> Coin</div>
+    <div class="coin-display" id="coin-display">🪙 <span id="coin-counter">0</span> Coin</div>
   </header>
 
   <div class="container">
     <main>
-      <!-- Trivia / Quiz Alanı -->
-      <div class="quiz-box">
-        <div class="quiz-header">
-          <span id="quiz-category">Off-Campus Quiz</span>
-          <span>Ödül: +25 Coin</span>
+      <!-- Coin Kazanma Alanı: Quiz + Mini Oyun -->
+      <div class="earn-box">
+        <div class="mode-tabs">
+          <button class="mode-tab active" id="tab-quiz">🧠 Bilgi Yarışması</button>
+          <button class="mode-tab" id="tab-game">🎴 Hafıza Oyunu</button>
         </div>
-        <div class="quiz-question" id="quiz-question">Soru yükleniyor...</div>
-        <div class="options-grid" id="options-container"></div>
-        <div class="quiz-feedback" id="quiz-feedback"></div>
-        <button class="next-btn" id="next-btn">Sonraki Soruya Geç ➔</button>
+
+        <!-- Quiz Paneli -->
+        <div id="quiz-panel">
+          <div class="quiz-header">
+            <span id="quiz-category">Off-Campus Quiz</span>
+            <span>Ödül: +25 Coin</span>
+          </div>
+          <div class="quiz-question" id="quiz-question">Soru yükleniyor...</div>
+          <div class="options-grid" id="options-container"></div>
+          <div class="quiz-feedback" id="quiz-feedback"></div>
+          <button class="next-btn" id="next-btn">Sonraki Soruya Geç ➔</button>
+        </div>
+
+        <!-- Hafıza Oyunu Paneli -->
+        <div id="game-panel" style="display:none;">
+          <div class="quiz-header">
+            <span>Kartları Eşleştir</span>
+            <span>Az hamlede bitir, çok coin kazan</span>
+          </div>
+          <div class="game-meta">
+            <span>Hamle: <strong id="move-counter">0</strong></span>
+            <span>Eşleşen: <strong id="match-counter">0</strong>/6</span>
+          </div>
+          <div class="game-result" id="game-result"></div>
+          <div class="memory-grid" id="memory-grid"></div>
+          <button class="newgame-btn" id="newgame-btn" style="display:inline-block;">🔄 Yeni Oyun</button>
+        </div>
       </div>
 
       <!-- Karakter Pazarı -->
@@ -216,45 +296,14 @@
 
     // Karakterler (Görsel URL'lerini istediğin gibi doldurabilirsin)
     const characters = [
-      {
-  id: 1,
-  source: "Off Campus",
-  name: "Garrett Graham",
-  role: "Briar Hokey Kaptanı (#1)",
-  price: 50,
-  emoji: "🏒",
-  image: "garrettgraham.jpg" // <-- Buraya yüklediğin dosyanın tam adını yaz
-},
-{
-  id: 2,
-  source: "Off Campus",
-  name: "John Logan",
-  role: "Hokey Oyuncusu",
-  price: 50,
-  emoji: "🏒",
-  image: "johnlogan.jpg"
-},
-{ 
-  id: 3,
-source: "Off Campus",
-name: "Dean Di Laurentis",
-role: "Hokey Oyuncusu",
-price: 50, 
-emoji: "🏒",
-image: "deanlaurentis.jpg"
-},
-{
-  id: 4,
-source: " Off Campus",
-name: "John Tucker",
-role: "Hokey Oyuncusu",
-price: 50, 
-emoji: "🏒",
-image: "tuckeroffcampus.jpg"
-}
+      { id: 1, source: "Off Campus", name: "Garrett Graham", role: "Briar Hokey Kaptanı (#1)", price: 50, emoji: "🏒", image: "garrettgraham.jpg" },
+      { id: 2, source: "Off Campus", name: "John Logan", role: "Hokey Oyuncusu", price: 50, emoji: "🏒", image: "johnlogan.jpg" },
+      { id: 3, source: "Off Campus", name: "Dean Di Laurentis", role: "Hokey Oyuncusu", price: 50, emoji: "🏒", image: "deanlaurentis.jpg" },
+      { id: 4, source: "Off Campus", name: "John Tucker", role: "Hokey Oyuncusu", price: 50, emoji: "🏒", image: "tuckeroffcampus.jpg" }
     ];
 
     // --- DOM ELEMENTLERİ ---
+    const coinDisplay = document.getElementById('coin-display');
     const coinCounter = document.getElementById('coin-counter');
     const quizCategory = document.getElementById('quiz-category');
     const quizQuestion = document.getElementById('quiz-question');
@@ -267,6 +316,43 @@ image: "tuckeroffcampus.jpg"
     const cartTotal = document.getElementById('cart-total');
     const checkoutBtn = document.getElementById('checkout-btn');
     const inventoryList = document.getElementById('inventory-list');
+
+    const tabQuiz = document.getElementById('tab-quiz');
+    const tabGame = document.getElementById('tab-game');
+    const quizPanel = document.getElementById('quiz-panel');
+    const gamePanel = document.getElementById('game-panel');
+
+    // --- TOAST BİLDİRİMLERİ (alert() yerine) ---
+    function showToast(message, type = 'info') {
+      const stack = document.getElementById('toast-stack');
+      const el = document.createElement('div');
+      el.className = `toast ${type}`;
+      el.innerText = message;
+      stack.appendChild(el);
+      setTimeout(() => el.remove(), 3000);
+    }
+
+    function addCoins(amount) {
+      coins += amount;
+      coinDisplay.classList.add('bump');
+      setTimeout(() => coinDisplay.classList.remove('bump'), 150);
+      updateUI();
+    }
+
+    // --- SEKME GEÇİŞİ (Quiz <-> Hafıza Oyunu) ---
+    tabQuiz.addEventListener('click', () => {
+      tabQuiz.classList.add('active');
+      tabGame.classList.remove('active');
+      quizPanel.style.display = 'block';
+      gamePanel.style.display = 'none';
+    });
+
+    tabGame.addEventListener('click', () => {
+      tabGame.classList.add('active');
+      tabQuiz.classList.remove('active');
+      gamePanel.style.display = 'block';
+      quizPanel.style.display = 'none';
+    });
 
     // --- QUIZ MANTIĞI ---
     function loadQuestion() {
@@ -289,13 +375,12 @@ image: "tuckeroffcampus.jpg"
     function selectAnswer(selectedIdx) {
       const q = questions[currentQuestionIndex];
       const buttons = optionsContainer.querySelectorAll('.option-btn');
-      
-      // Butonları kilitle
+
       buttons.forEach(btn => btn.disabled = true);
 
       if (selectedIdx === q.correct) {
         buttons[selectedIdx].classList.add('correct');
-        coins += 25;
+        addCoins(25);
         quizFeedback.style.color = 'var(--success)';
         quizFeedback.innerText = '🎉 Harika! Doğru cevap (+25 Coin)';
       } else {
@@ -305,7 +390,6 @@ image: "tuckeroffcampus.jpg"
         quizFeedback.innerText = '❌ Yanlış cevap! Doğru olan işaretlendi.';
       }
 
-      updateUI();
       nextBtn.style.display = 'inline-block';
     }
 
@@ -313,6 +397,108 @@ image: "tuckeroffcampus.jpg"
       currentQuestionIndex = (currentQuestionIndex + 1) % questions.length;
       loadQuestion();
     });
+
+    // --- HAFIZA OYUNU MANTIĞI ---
+    const memoryEmojis = ['🏒', '📚', '⚡', '🐺', '🎭', '🔥'];
+    const memoryGrid = document.getElementById('memory-grid');
+    const moveCounterEl = document.getElementById('move-counter');
+    const matchCounterEl = document.getElementById('match-counter');
+    const gameResultEl = document.getElementById('game-result');
+    const newGameBtn = document.getElementById('newgame-btn');
+
+    let memoryDeck = [];
+    let flippedCards = [];
+    let matchedCount = 0;
+    let moveCount = 0;
+    let boardLocked = false;
+
+    function shuffle(arr) {
+      const a = [...arr];
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    }
+
+    function startMemoryGame() {
+      const pairSet = shuffle([...memoryEmojis, ...memoryEmojis]);
+      memoryDeck = pairSet.map((emoji, idx) => ({ id: idx, emoji, flipped: false, matched: false }));
+      flippedCards = [];
+      matchedCount = 0;
+      moveCount = 0;
+      boardLocked = false;
+
+      moveCounterEl.innerText = moveCount;
+      matchCounterEl.innerText = matchedCount;
+      gameResultEl.style.display = 'none';
+
+      renderMemoryGrid();
+    }
+
+    function renderMemoryGrid() {
+      memoryGrid.innerHTML = '';
+      memoryDeck.forEach(card => {
+        const el = document.createElement('div');
+        el.className = 'memory-card' + (card.flipped ? ' flipped' : '') + (card.matched ? ' matched' : '');
+        el.innerHTML = (card.flipped || card.matched)
+          ? card.emoji
+          : '<span class="face-down">?</span>';
+        el.onclick = () => flipCard(card.id);
+        memoryGrid.appendChild(el);
+      });
+    }
+
+    function flipCard(id) {
+      if (boardLocked) return;
+      const card = memoryDeck.find(c => c.id === id);
+      if (!card || card.flipped || card.matched) return;
+
+      card.flipped = true;
+      flippedCards.push(card);
+      renderMemoryGrid();
+
+      if (flippedCards.length === 2) {
+        moveCount++;
+        moveCounterEl.innerText = moveCount;
+        boardLocked = true;
+
+        const [a, b] = flippedCards;
+        if (a.emoji === b.emoji) {
+          a.matched = true;
+          b.matched = true;
+          matchedCount++;
+          matchCounterEl.innerText = matchedCount;
+          flippedCards = [];
+          boardLocked = false;
+          renderMemoryGrid();
+
+          if (matchedCount === memoryEmojis.length) {
+            finishMemoryGame();
+          }
+        } else {
+          setTimeout(() => {
+            a.flipped = false;
+            b.flipped = false;
+            flippedCards = [];
+            boardLocked = false;
+            renderMemoryGrid();
+          }, 700);
+        }
+      }
+    }
+
+    function finishMemoryGame() {
+      // Az hamleyle bitirince daha çok coin: 6 hamlede tavan ödül, her fazla hamlede azalır.
+      const perfectMoves = memoryEmojis.length; // 6
+      const reward = Math.max(15, 80 - (moveCount - perfectMoves) * 4);
+      gameResultEl.style.display = 'block';
+      gameResultEl.innerText = `🏆 Tebrikler! ${moveCount} hamlede bitirdin. +${reward} Coin kazandın!`;
+      addCoins(reward);
+      showToast(`Hafıza oyunu tamamlandı: +${reward} Coin`, 'success');
+    }
+
+    newGameBtn.addEventListener('click', startMemoryGame);
 
     // --- MARKET MANTIĞI ---
     function renderMarket() {
@@ -323,7 +509,7 @@ image: "tuckeroffcampus.jpg"
         card.className = 'character-card';
 
         const imageHtml = char.image
-          ? `<img src="${char.image}" alt="${char.name}" class="card-img">`
+          ? `<img src="${char.image}" alt="${char.name}" class="card-img" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'card-placeholder',innerText:'${char.emoji}'}))">`
           : `<div class="card-placeholder">${char.emoji}</div>`;
 
         card.innerHTML = `
@@ -346,11 +532,12 @@ image: "tuckeroffcampus.jpg"
       });
     }
 
-    // --- SEPET & ENGELLENMİŞ ALIMLAR ---
+    // --- SEPET ---
     window.addToCart = function(id) {
       const char = characters.find(c => c.id === id);
       if (!cart.some(item => item.id === id) && !inventory.some(item => item.id === id)) {
         cart.push(char);
+        showToast(`${char.name} sepete eklendi.`);
         updateUI();
       }
     };
@@ -364,7 +551,7 @@ image: "tuckeroffcampus.jpg"
       const total = cart.reduce((sum, item) => sum + item.price, 0);
 
       if (cart.length === 0) {
-        alert("Sepetiniz boş!");
+        showToast('Sepetiniz boş!', 'error');
         return;
       }
 
@@ -372,10 +559,10 @@ image: "tuckeroffcampus.jpg"
         coins -= total;
         inventory.push(...cart);
         cart = [];
-        alert("Karakterler başarıyla koleksiyonuna katıldı!");
+        showToast('Karakterler koleksiyonuna katıldı! 🎉', 'success');
         updateUI();
       } else {
-        alert(`Yetersiz Coin! Toplam ${total} Coin gerekiyor. Soruları çözerek coin biriktirebilirsin.`);
+        showToast(`Yetersiz Coin! ${total} Coin gerekiyor.`, 'error');
       }
     });
 
@@ -383,7 +570,6 @@ image: "tuckeroffcampus.jpg"
     function updateUI() {
       coinCounter.innerText = coins;
 
-      // Sepet
       cartList.innerHTML = cart.length === 0 ? '<li style="color: var(--text-muted); font-size: 0.85rem;">Sepetiniz boş.</li>' : '';
       let total = 0;
       cart.forEach(item => {
@@ -401,7 +587,6 @@ image: "tuckeroffcampus.jpg"
       });
       cartTotal.innerText = `${total} Coin`;
 
-      // Koleksiyon
       inventoryList.innerHTML = inventory.length === 0 ? '<li style="color: var(--text-muted); font-size: 0.85rem;">Henüz bir karakter almadın.</li>' : '';
       inventory.forEach(item => {
         const li = document.createElement('li');
@@ -415,6 +600,7 @@ image: "tuckeroffcampus.jpg"
 
     // Başlangıç Yüklemesi
     loadQuestion();
+    startMemoryGame();
     updateUI();
   </script>
 </body>
