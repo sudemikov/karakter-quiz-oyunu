@@ -19,28 +19,45 @@
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-    body { background: var(--bg); color: var(--text); padding: 20px; min-height: 100vh; }
+    
+    body { 
+      background: var(--bg); 
+      color: var(--text); 
+      padding: 12px; 
+      min-height: 100vh;
+      max-width: 1400px;
+      margin: 0 auto;
+      overflow-x: hidden;
+    }
 
     header {
       display: flex; justify-content: space-between; align-items: center;
-      padding: 1.2rem 2rem; background: var(--card-bg); border-radius: 12px;
-      margin-bottom: 20px; border: 1px solid var(--border);
+      padding: 0.8rem 1.4rem; background: var(--card-bg); border-radius: 10px;
+      margin-bottom: 14px; border: 1px solid var(--border);
     }
 
-    .user-badge { font-weight: bold; color: var(--accent); display: flex; align-items: center; gap: 8px; font-size: 1.05rem; }
+    .user-badge { font-weight: bold; color: var(--accent); display: flex; align-items: center; gap: 6px; font-size: 0.95rem; }
 
     .coin-display {
-      font-size: 1.3rem; font-weight: 800; color: var(--accent-gold);
-      display: flex; align-items: center; gap: 8px;
-      background: rgba(250, 204, 21, 0.1); padding: 8px 16px; border-radius: 20px;
+      font-size: 1.1rem; font-weight: 800; color: var(--accent-gold);
+      display: flex; align-items: center; gap: 6px;
+      background: rgba(250, 204, 21, 0.1); padding: 6px 12px; border-radius: 16px;
       transition: transform 0.15s;
     }
-    .coin-display.bump { transform: scale(1.12); }
+    .coin-display.bump { transform: scale(1.1); }
 
-    .container { display: grid; grid-template-columns: 2fr 1.1fr; gap: 20px; }
-    @media (max-width: 960px) { .container { grid-template-columns: 1fr; } }
+    .container { 
+      display: grid; 
+      grid-template-columns: minmax(0, 1fr) 300px; 
+      gap: 16px; 
+      width: 100%;
+    }
+    
+    @media (max-width: 1024px) { 
+      .container { grid-template-columns: 1fr; } 
+    }
 
-    .section-title { font-size: 1.25rem; margin-bottom: 15px; color: var(--accent); display: flex; align-items: center; gap: 8px; }
+    .section-title { font-size: 1.1rem; margin-bottom: 10px; color: var(--accent); display: flex; align-items: center; gap: 6px; }
 
     /* Auth Modal */
     .modal-overlay {
@@ -48,122 +65,124 @@
       display: flex; align-items: center; justify-content: center; z-index: 1000;
     }
     .modal-card {
-      background: var(--card-bg); border: 1px solid var(--border); padding: 30px;
-      border-radius: 16px; width: 90%; max-width: 420px; text-align: center;
+      background: var(--card-bg); border: 1px solid var(--border); padding: 24px;
+      border-radius: 12px; width: 90%; max-width: 380px; text-align: center;
       box-shadow: 0 10px 30px rgba(0,0,0,0.5);
     }
     .modal-card input {
-      width: 100%; padding: 12px 16px; background: var(--card-inner); border: 1px solid var(--border);
-      color: var(--text); border-radius: 8px; margin: 15px 0 10px; font-size: 1rem; outline: none;
+      width: 100%; padding: 10px 14px; background: var(--card-inner); border: 1px solid var(--border);
+      color: var(--text); border-radius: 6px; margin: 12px 0 8px; font-size: 0.9rem; outline: none;
     }
     .modal-card input:focus { border-color: var(--accent); }
-    .modal-err { color: var(--danger); font-size: 0.85rem; margin-bottom: 15px; min-height: 20px; text-align: left; }
+    .modal-err { color: var(--danger); font-size: 0.8rem; margin-bottom: 12px; min-height: 18px; text-align: left; }
 
     /* Kazanç Paneli */
-    .earn-box { background: var(--card-bg); padding: 25px; border-radius: 12px; margin-bottom: 25px; border: 1px solid var(--border); position: relative; }
-    .mode-tabs { display: flex; gap: 8px; margin-bottom: 18px; border-bottom: 1px solid var(--border); }
+    .earn-box { background: var(--card-bg); padding: 16px; border-radius: 10px; margin-bottom: 16px; border: 1px solid var(--border); position: relative; }
+    .mode-tabs { display: flex; gap: 6px; margin-bottom: 12px; border-bottom: 1px solid var(--border); }
     .mode-tab {
       background: transparent; border: none; color: var(--text-muted);
-      padding: 10px 16px; font-size: 0.95rem; font-weight: 700; cursor: pointer;
+      padding: 8px 12px; font-size: 0.85rem; font-weight: 700; cursor: pointer;
       border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all 0.15s;
     }
     .mode-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
 
-    /* Cooldown Kutuları */
     .cooldown-overlay {
-      background: rgba(15, 23, 42, 0.94); border-radius: 10px; border: 1px solid var(--accent-gold);
-      padding: 30px 20px; text-align: center; margin-top: 10px;
+      background: rgba(15, 23, 42, 0.94); border-radius: 8px; border: 1px solid var(--accent-gold);
+      padding: 20px 14px; text-align: center; margin-top: 6px;
     }
-    .timer-text { font-size: 2rem; font-weight: 900; color: var(--accent-gold); margin: 12px 0; letter-spacing: 2px; }
+    .timer-text { font-size: 1.6rem; font-weight: 900; color: var(--accent-gold); margin: 8px 0; letter-spacing: 1px; }
 
-    .quiz-header { display: flex; justify-content: space-between; font-size: 0.85rem; color: var(--accent); margin-bottom: 10px; text-transform: uppercase; font-weight: bold; }
-    .quiz-question { font-size: 1.15rem; font-weight: 600; margin-bottom: 20px; line-height: 1.4; }
-    .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
+    .quiz-header { display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--accent); margin-bottom: 8px; text-transform: uppercase; font-weight: bold; }
+    .quiz-question { font-size: 1rem; font-weight: 600; margin-bottom: 14px; line-height: 1.35; }
+    .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
     @media (max-width: 600px) { .options-grid { grid-template-columns: 1fr; } }
+    
     .option-btn {
       background: var(--card-inner); color: var(--text); border: 1px solid var(--border);
-      padding: 12px 16px; border-radius: 8px; font-size: 0.95rem; cursor: pointer; text-align: left; transition: all 0.2s;
+      padding: 10px 12px; border-radius: 6px; font-size: 0.85rem; cursor: pointer; text-align: left; transition: all 0.2s;
     }
     .option-btn:hover:not(:disabled) { background: #334155; border-color: var(--accent); }
     .option-btn.correct { background: var(--success); color: #000; font-weight: bold; }
     .option-btn.wrong { background: var(--danger); color: #fff; font-weight: bold; }
-    .quiz-feedback { min-height: 24px; font-size: 0.95rem; font-weight: bold; margin-bottom: 12px; }
-    .next-btn { background: var(--accent); color: #0f172a; border: none; font-weight: bold; padding: 10px 20px; border-radius: 6px; cursor: pointer; display: none; }
+    .quiz-feedback { min-height: 20px; font-size: 0.85rem; font-weight: bold; margin-bottom: 8px; }
+    .next-btn { background: var(--accent); color: #0f172a; border: none; font-weight: bold; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; display: none; }
 
     /* Hafıza Oyunu */
-    .game-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; font-size: 0.9rem; color: var(--text-muted); }
+    .game-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-size: 0.8rem; color: var(--text-muted); }
     .game-meta strong { color: var(--text); }
-    .memory-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 16px; }
+    .memory-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 12px; }
     @media (max-width: 480px) { .memory-grid { grid-template-columns: repeat(3, 1fr); } }
+    
     .memory-card {
-      aspect-ratio: 1 / 1; border-radius: 10px; border: 1px solid var(--border);
+      aspect-ratio: 1 / 1; border-radius: 8px; border: 1px solid var(--border);
       background: var(--card-inner); display: flex; align-items: center; justify-content: center;
-      font-size: 1.8rem; cursor: pointer; user-select: none; transition: transform 0.25s, background 0.2s;
+      font-size: 1.5rem; cursor: pointer; user-select: none; transition: transform 0.2s, background 0.2s;
     }
     .memory-card.flipped, .memory-card.matched { background: #263349; }
     .memory-card.matched { border-color: var(--success); opacity: 0.75; cursor: default; }
 
-    /* Market Arama & Filtreleme */
-    .filter-controls {
-      display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px;
-    }
+    /* Arama & Filtre */
+    .filter-controls { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
     .search-input {
-      width: 100%; padding: 12px 16px; background: var(--card-bg); border: 1px solid var(--border);
-      color: var(--text); border-radius: 8px; font-size: 0.95rem; outline: none;
+      width: 100%; padding: 10px 14px; background: var(--card-bg); border: 1px solid var(--border);
+      color: var(--text); border-radius: 6px; font-size: 0.85rem; outline: none;
     }
     .search-input:focus { border-color: var(--accent); }
-    .category-pills {
-      display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px;
-    }
+    
+    .category-pills { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; }
     .pill-btn {
       background: var(--card-bg); color: var(--text-muted); border: 1px solid var(--border);
-      padding: 6px 14px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; cursor: pointer; white-space: nowrap;
+      padding: 5px 12px; border-radius: 14px; font-size: 0.75rem; font-weight: 600; cursor: pointer; white-space: nowrap;
     }
     .pill-btn.active { background: var(--accent); color: #0f172a; border-color: var(--accent); }
 
     /* Market Kartları */
     .market-grid {
-      display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-      gap: 14px; max-height: 700px; overflow-y: auto; padding-right: 4px;
+      display: grid; 
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 12px; 
+      max-height: 520px; 
+      overflow-y: auto; 
+      padding-right: 4px;
     }
-    .character-card { background: var(--card-bg); border-radius: 10px; overflow: hidden; border: 1px solid var(--border); display: flex; flex-direction: column; }
-    .card-img-wrap { width: 100%; height: 180px; background-color: #0b1120; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+    .character-card { background: var(--card-bg); border-radius: 8px; overflow: hidden; border: 1px solid var(--border); display: flex; flex-direction: column; }
+    .card-img-wrap { width: 100%; height: 140px; background-color: #0b1120; display: flex; align-items: center; justify-content: center; overflow: hidden; }
     .card-img { width: 100%; height: 100%; object-fit: cover; }
-    .card-placeholder { font-size: 2.8rem; }
-    .card-info { padding: 12px; flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; }
-    .char-source { font-size: 0.7rem; color: var(--accent); text-transform: uppercase; font-weight: bold; margin-bottom: 2px; }
-    .char-name { font-size: 0.95rem; font-weight: bold; }
-    .char-role { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 8px; }
-    .char-price { font-size: 0.95rem; color: var(--accent-gold); font-weight: bold; margin-bottom: 8px; text-align: center; }
+    .card-placeholder { font-size: 2.2rem; }
+    .card-info { padding: 10px; flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; }
+    .char-source { font-size: 0.65rem; color: var(--accent); text-transform: uppercase; font-weight: bold; margin-bottom: 2px; }
+    .char-name { font-size: 0.85rem; font-weight: bold; line-height: 1.2; margin-bottom: 2px; }
+    .char-role { font-size: 0.7rem; color: var(--text-muted); margin-bottom: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .char-price { font-size: 0.85rem; color: var(--accent-gold); font-weight: bold; margin-bottom: 6px; text-align: center; }
 
-    .btn { width: 100%; padding: 8px; border-radius: 6px; border: none; font-weight: bold; cursor: pointer; transition: opacity 0.2s; font-size: 0.85rem; }
+    .btn { width: 100%; padding: 7px; border-radius: 5px; border: none; font-weight: bold; cursor: pointer; transition: opacity 0.2s; font-size: 0.75rem; }
     .btn-buy { background: #334155; color: var(--text); }
     .btn-buy:hover:not(:disabled) { background: var(--accent); color: #0f172a; }
     .btn-buy:disabled { opacity: 0.5; cursor: not-allowed; }
 
-    /* Sidebar */
-    .sidebar { display: flex; flex-direction: column; gap: 20px; }
-    .panel { background: var(--card-bg); padding: 20px; border-radius: 12px; border: 1px solid var(--border); }
-    .cart-list, .inventory-list { list-style: none; margin-bottom: 15px; max-height: 180px; overflow-y: auto; }
-    .cart-item, .inventory-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
+    /* Sağ Sidebar */
+    .sidebar { display: flex; flex-direction: column; gap: 14px; width: 100%; }
+    .panel { background: var(--card-bg); padding: 14px; border-radius: 10px; border: 1px solid var(--border); }
+    .cart-list, .inventory-list { list-style: none; margin-bottom: 10px; max-height: 150px; overflow-y: auto; }
+    .cart-item, .inventory-item { display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid var(--border); font-size: 0.8rem; }
     .btn-checkout { background: var(--success); color: #0f172a; }
     .btn-remove { background: none; border: none; color: var(--danger); cursor: pointer; }
 
-    .leaderboard-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
-    .leaderboard-table th { text-align: left; color: var(--text-muted); padding-bottom: 8px; border-bottom: 1px solid var(--border); }
-    .leaderboard-table td { padding: 10px 4px; border-bottom: 1px solid rgba(51, 65, 85, 0.5); }
+    .leaderboard-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
+    .leaderboard-table th { text-align: left; color: var(--text-muted); padding-bottom: 6px; border-bottom: 1px solid var(--border); }
+    .leaderboard-table td { padding: 6px 2px; border-bottom: 1px solid rgba(51, 65, 85, 0.5); }
     .leaderboard-table tr.current-user { background: rgba(56, 189, 248, 0.12); font-weight: bold; color: var(--accent); }
-    .rank-num { font-weight: 800; width: 30px; }
+    .rank-num { font-weight: 800; width: 26px; }
     .rank-1 { color: #facc15; }
     .rank-2 { color: #cbd5e1; }
     .rank-3 { color: #b45309; }
 
     /* Toast */
-    #toast-stack { position: fixed; top: 20px; right: 20px; display: flex; flex-direction: column; gap: 10px; z-index: 2000; }
+    #toast-stack { position: fixed; top: 16px; right: 16px; display: flex; flex-direction: column; gap: 8px; z-index: 2000; }
     .toast {
-      background: var(--card-bg); border: 1px solid var(--border); border-left: 4px solid var(--accent);
-      color: var(--text); padding: 12px 16px; border-radius: 8px; font-size: 0.9rem;
-      box-shadow: 0 6px 18px rgba(0,0,0,0.35); animation: toast-in 0.2s ease-out, toast-out 0.3s ease-in 2.7s forwards;
+      background: var(--card-bg); border: 1px solid var(--border); border-left: 3px solid var(--accent);
+      color: var(--text); padding: 10px 14px; border-radius: 6px; font-size: 0.8rem;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.35); animation: toast-in 0.2s ease-out, toast-out 0.3s ease-in 2.7s forwards;
     }
     .toast.success { border-left-color: var(--success); }
     .toast.error { border-left-color: var(--danger); }
@@ -183,7 +202,7 @@
   <div class="modal-overlay" id="auth-modal" style="display:none;">
     <div class="modal-card">
       <h2 style="color: var(--accent); margin-bottom: 8px;">🎬 Koleksiyon Pazarı</h2>
-      <p style="color: var(--text-muted); font-size: 0.9rem;">100+ karakterlik pazara katılmak ve sıralamaya girmek için kullanıcı adı seç.</p>
+      <p style="color: var(--text-muted); font-size: 0.85rem;">100+ karakterlik pazara katılmak ve sıralamaya girmek için kullanıcı adı seç.</p>
       <input type="text" id="username-input" placeholder="Kullanıcı adın..." maxlength="15" autocomplete="off">
       <div class="modal-err" id="modal-err"></div>
       <button class="btn btn-checkout" id="start-btn">Koleksiyona Başla</button>
@@ -192,7 +211,7 @@
 
   <header>
     <div>
-      <h1 style="font-size: 1.35rem;">🎬 Karakter Koleksiyonu (100+ Popüler Figür)</h1>
+      <h1 style="font-size: 1.15rem;">🎬 Karakter Koleksiyonu (100+ Figür)</h1>
       <div class="user-badge" id="user-badge-display">👤 Yükleniyor...</div>
     </div>
     <div class="coin-display" id="coin-display">🪙 <span id="coin-counter">0</span> Coin</div>
@@ -211,7 +230,7 @@
         <div id="quiz-wrapper">
           <div class="cooldown-overlay" id="quiz-cooldown-box" style="display:none;">
             <h3 style="color: var(--accent-gold);">⏳ Quiz Hakların Bitti! (6/6)</h3>
-            <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 4px;">Yeni sorular için kalan süre:</p>
+            <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 4px;">Yeni sorular için kalan süre:</p>
             <div class="timer-text" id="quiz-cooldown-timer">15:00</div>
           </div>
 
@@ -231,7 +250,7 @@
         <div id="game-wrapper" style="display:none;">
           <div class="cooldown-overlay" id="game-cooldown-box" style="display:none;">
             <h3 style="color: var(--accent-gold);">⏳ Hafıza Oyunu Hakların Bitti! (6/6)</h3>
-            <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 4px;">Yeni kart hakları için kalan süre:</p>
+            <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 4px;">Yeni kart hakları için kalan süre:</p>
             <div class="timer-text" id="game-cooldown-timer">15:00</div>
           </div>
 
@@ -294,9 +313,9 @@
       <div class="panel">
         <h2 class="section-title">🛒 Sepet</h2>
         <ul class="cart-list" id="cart-list">
-          <li style="color: var(--text-muted); font-size: 0.85rem;">Sepetiniz boş.</li>
+          <li style="color: var(--text-muted); font-size: 0.8rem;">Sepetiniz boş.</li>
         </ul>
-        <div style="display: flex; justify-content: space-between; margin-bottom: 12px; font-weight: bold;">
+        <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-weight: bold; font-size: 0.85rem;">
           <span>Toplam:</span>
           <span id="cart-total" style="color: var(--accent-gold);">0 Coin</span>
         </div>
@@ -307,7 +326,7 @@
       <div class="panel">
         <h2 class="section-title">🖼️ Koleksiyonun</h2>
         <ul class="inventory-list" id="inventory-list">
-          <li style="color: var(--text-muted); font-size: 0.85rem;">Henüz bir karakter almadın.</li>
+          <li style="color: var(--text-muted); font-size: 0.8rem;">Henüz bir karakter almadın.</li>
         </ul>
       </div>
     </aside>
@@ -338,19 +357,19 @@
       { id: 2, source: "Off Campus", name: "John Logan", role: "Savunma Yıldızı", price: 50, emoji: "🏒", image: "johnlogan.jpg" },
       { id: 3, source: "Off Campus", name: "Dean Di Laurentis", role: "Hokey Forveti", price: 50, emoji: "🍸", image: "deanlaurentis.jpg" },
       { id: 4, source: "Off Campus", name: "John Tucker", role: "Hokey Oyuncusu", price: 50, emoji: "🤠", image: "tuckeroffcampus.jpg" },
-      { id: 5, source: "Off Campus", name: "Hannah Wells", role: "Müzisyen & Mentor", price: 45, emoji: "🎶", image: "hannahofcampuss.webp" },
-      { id: 6, source: "Off Campus", name: "Grace Ivers", role: "Edebiyat Öğrencisi", price: 45, emoji: "📖", image: "graceıveryoffcampus.webp" },
-      { id: 7, source: "Off Campus", name: "Allie Hayes", role: "Tiyatrocu & Aktris", price: 45, emoji: "🎭", image: "allieoffcampus.jpg" },
+      { id: 5, source: "Off Campus", name: "Hannah Wells", role: "Müzisyen & Mentor", price: 45, emoji: "🎶", image: "" },
+      { id: 6, source: "Off Campus", name: "Grace Ivers", role: "Edebiyat Öğrencisi", price: 45, emoji: "📖", image: "" },
+      { id: 7, source: "Off Campus", name: "Allie Hayes", role: "Tiyatrocu & Aktris", price: 45, emoji: "🎭", image: "" },
       { id: 8, source: "Off Campus", name: "Sabrina James", role: "Hukukçu & Azimli", price: 50, emoji: "⚖️", image: "" },
       { id: 9, source: "Off Campus", name: "Jake Connelly", role: "Harvard Kaptanı", price: 55, emoji: "🏒", image: "" },
       { id: 10, source: "Off Campus", name: "Brenna Jensen", role: "Koçun Kızı & Asi", price: 45, emoji: "🎧", image: "" },
 
       // --- House of the Dragon ---
-      { id: 11, source: "House of the Dragon", name: "Daemon Targaryen", role: "Serseri Prens", price: 80, emoji: "🐉", image: "deamontargaryenhod.jpg" },
-      { id: 12, source: "House of the Dragon", name: "Rhaenyra Targaryen", role: "Siyah Kraliçe", price: 80, emoji: "👑", image: "rhaenyratargaryenhod.jpg" },
-      { id: 13, source: "House of the Dragon", name: "Aemond Targaryen", role: "Tek Gözlü Savaşçı", price: 75, emoji: "🗡️", image: "aemondtargaryenhod.jpg" },
-      { id: 14, source: "House of the Dragon", name: "Alicent Hightower", role: "Yeşil Kraliçe", price: 65, emoji: "🕯️", image: "alicenthightowerhod.jpg" },
-      { id: 15, source: "House of the Dragon", name: "Viserys I Targaryen", role: "Barışçıl Kral", price: 60, emoji: "🏰", image: "viserys1targaryenhod.jpg" },
+      { id: 11, source: "House of the Dragon", name: "Daemon Targaryen", role: "Serseri Prens", price: 80, emoji: "🐉", image: "" },
+      { id: 12, source: "House of the Dragon", name: "Rhaenyra Targaryen", role: "Siyah Kraliçe", price: 80, emoji: "👑", image: "" },
+      { id: 13, source: "House of the Dragon", name: "Aemond Targaryen", role: "Tek Gözlü Savaşçı", price: 75, emoji: "🗡️", image: "" },
+      { id: 14, source: "House of the Dragon", name: "Alicent Hightower", role: "Yeşil Kraliçe", price: 65, emoji: "🕯️", image: "" },
+      { id: 15, source: "House of the Dragon", name: "Viserys I Targaryen", role: "Barışçıl Kral", price: 60, emoji: "🏰", image: "" },
       { id: 16, source: "House of the Dragon", name: "Otto Hightower", role: "Kral Eli", price: 55, emoji: "📜", image: "" },
       { id: 17, source: "House of the Dragon", name: "Criston Cole", role: "Kral Muhafızı", price: 50, emoji: "🛡️", image: "" },
       { id: 18, source: "House of the Dragon", name: "Corlys Velaryon", role: "Deniz Yılanı", price: 65, emoji: "⚓", image: "" },
@@ -1027,7 +1046,6 @@
     function renderMarket() {
       marketContainer.innerHTML = '';
 
-      // Filtreleme
       const filtered = characters.filter(char => {
         const matchesCategory = (currentCategory === 'all') || (char.source === currentCategory);
         const matchesSearch = char.name.toLowerCase().includes(currentSearchQuery) || 
@@ -1039,7 +1057,7 @@
       visibleCountEl.innerText = filtered.length;
 
       if (filtered.length === 0) {
-        marketContainer.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 40px;">Aradığın kriterlere uygun karakter bulunamadı.</div>`;
+        marketContainer.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 40px; font-size: 0.85rem;">Aradığın kriterlere uygun karakter bulunamadı.</div>`;
         return;
       }
 
@@ -1106,7 +1124,7 @@
       coinCounter.innerText = coins;
 
       // Sepet
-      cartList.innerHTML = cart.length === 0 ? '<li style="color: var(--text-muted); font-size: 0.85rem;">Sepetiniz boş.</li>' : '';
+      cartList.innerHTML = cart.length === 0 ? '<li style="color: var(--text-muted); font-size: 0.8rem;">Sepetiniz boş.</li>' : '';
       let total = 0;
       cart.forEach(item => {
         total += item.price;
@@ -1115,7 +1133,7 @@
         li.innerHTML = `
           <span>${item.name}</span>
           <div>
-            <span style="color: var(--accent-gold);">🪙 ${item.price}</span>
+            <span style="color: var(--accent-gold); margin-right: 4px;">🪙 ${item.price}</span>
             <button class="btn-remove" onclick="removeFromCart(${item.id})">✖</button>
           </div>
         `;
@@ -1124,11 +1142,11 @@
       cartTotal.innerText = `${total} Coin`;
 
       // Koleksiyon
-      inventoryList.innerHTML = inventory.length === 0 ? '<li style="color: var(--text-muted); font-size: 0.85rem;">Henüz bir karakter almadın.</li>' : '';
+      inventoryList.innerHTML = inventory.length === 0 ? '<li style="color: var(--text-muted); font-size: 0.8rem;">Henüz bir karakter almadın.</li>' : '';
       inventory.forEach(item => {
         const li = document.createElement('li');
         li.className = 'inventory-item';
-        li.innerHTML = `<span>${item.emoji} ${item.name}</span> <span style="color: var(--text-muted); font-size: 0.8rem;">${item.source}</span>`;
+        li.innerHTML = `<span>${item.emoji} ${item.name}</span> <span style="color: var(--text-muted); font-size: 0.75rem;">${item.source}</span>`;
         inventoryList.appendChild(li);
       });
 
