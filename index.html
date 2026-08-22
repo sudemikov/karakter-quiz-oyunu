@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Karakter Koleksiyonu Pazarı</title>
+  <style>
+    :root {
+      --bg: #121212;
+      --card-bg: #1e1e1e;
+      --text: #e0e0e0;
+      --text-muted: #aaaaaa;
+      --accent: #bb86fc; /* Mor tonları, popüler kültür hissi */
+      --accent-gold: #cfd8dc; /* Coin rengi */
+      --danger: #cf6679;
+      --success: #03dac6;
+      --border: #333333;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+
+    body { background: var(--bg); color: var(--text); padding: 20px; min-height: 100vh; }
+
+    header {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 1rem 2rem; background: var(--card-bg); border-radius: 12px;
+      margin-bottom: 20px; border: 1px solid var(--border);
+    }
+
+    .coin-display {
+      font-size: 1.2rem; font-weight: bold; color: var(--accent-gold);
+      display: flex; align-items: center; gap: 8px;
+    }
+
+    .container { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
+
+    @media (max-width: 900px) { .container { grid-template-columns: 1fr; } }
+
+    .section-title { font-size: 1.4rem; margin-bottom: 15px; color: var(--accent); }
+
+    /* --- Mini Oyun Alanı --- */
+    .game-box {
+      background: var(--card-bg); padding: 25px; border-radius: 12px;
+      text-align: center; margin-bottom: 25px; border: 1px solid var(--border);
+    }
+
+    .clicker-btn {
+      background: linear-gradient(135deg, var(--accent), #9575cd);
+      color: #000; font-weight: bold; font-size: 1.1rem; border: none;
+      padding: 15px 30px; border-radius: 30px; cursor: pointer;
+      box-shadow: 0 4px 15px rgba(187, 134, 252, 0.3);
+      transition: transform 0.1s, box-shadow 0.2s;
+    }
+
+    .clicker-btn:active { transform: scale(0.97); }
+    .clicker-btn:hover { box-shadow: 0 6px 20px rgba(187, 134, 252, 0.5); }
+
+    /* --- Market Kartları --- */
+    .market-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 20px;
+    }
+
+    .character-card {
+      background: var(--card-bg); border-radius: 12px; overflow: hidden;
+      border: 1px solid var(--border); transition: transform 0.2s;
+      display: flex; flex-direction: column;
+    }
+
+    .character-card:hover { transform: translateY(-5px); border-color: var(--accent); }
+
+    .card-img {
+      width: 100%; height: 280px; /* Portre resimler için ideal boy */
+      background-color: #2a2a2a; /* Resim yüklenmezse gri alan */
+      display: flex; align-items: center; justify-content: center;
+      color: var(--text-muted); font-size: 0.9rem;
+      object-fit: cover; /* Resmi sığdırmak için */
+    }
+
+    .card-info { padding: 15px; flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between;}
+
+    .char-source { font-size: 0.8rem; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px;}
+    .char-name { font-size: 1.2rem; font-weight: bold; margin-bottom: 2px;}
+    .char-role { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 10px; }
+
+    .char-price { font-size: 1.1rem; color: var(--accent-gold); font-weight: bold; margin-bottom: 15px; text-align: center;}
+
+    .btn { width: 100%; padding: 10px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; transition: background 0.2s; }
+
+    .btn-buy { background: #333; color: var(--text); border: 1px solid var(--border); }
+    .btn-buy:hover:not(:disabled) { background: var(--accent); color: #000; border-color: var(--accent); }
+
+    /* --- Sepet & Koleksiyon Paneli --- */
+    .sidebar { display: flex; flex-direction: column; gap: 20px; }
+    .panel { background: var(--card-bg); padding: 20px; border-radius: 12px; border: 1px solid var(--border); }
+
+    .cart-list, .inventory-list { list-style: none; margin-bottom: 15px; max-height: 250px; overflow-y: auto; }
+
+    .cart-item, .inventory-item {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 0.9rem;
+    }
+
+    .btn-checkout { background: var(--success); color: #000; margin-top: 10px; }
+    .btn-checkout:hover { opacity: 0.9; }
+
+    .btn-remove { background: none; border: none; color: var(--danger); cursor: pointer; font-size: 1.1rem; margin-left: 10px;}
+
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>🎬 Karakter Koleksiyonu</h1>
+    <div class="coin-display">🪙 <span id="coin-counter">0</span> Coin</div>
+  </header>
+
+  <div class="container">
+    <main>
+      <!-- Mini Oyun -->
+      <div class="game-box">
+        <h2 class="section-title">🪙 Coin Kazan</h2>
+        <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 15px;">Yeni karakterler açmak için buraya tıkla!</p>
+        <button class="clicker-btn" id="mine-btn">Tıkla (+5 Coin)</button>
+      </div>
+
+      <!-- Karakter Pazarı -->
+      <h2 class="section-title">👥 Popüler Karakterler</h2>
+      <div class="market-grid" id="market-container"></div>
+    </main>
+
+    <aside class="sidebar">
+      <!-- Sepet -->
+      <div class="panel">
+        <h2 class="section-title">🛒 Sepet</h2>
+        <ul class="cart-list" id="cart-list">
+          <li style="color: var(--text-muted); font-size: 0.85rem;">Sepetin boş.</li>
+        </ul>
+        <div style="display: flex; justify-content: space-between; margin-bottom: 5px; font-weight: bold;">
+          <span>Toplam:</span>
+          <span id="cart-total" style="color: var(--accent-gold);">0 Coin</span>
+        </div>
+        <button class="btn btn-checkout" id="checkout-btn">Satın Al</button>
+      </div>
+
+      <!-- Satın Alınanlar / Koleksiyon -->
+      <div class="panel">
+        <h2 class="section-title">🖼️ Koleksiyonun</h2>
+        <ul class="inventory-list" id="inventory-list">
+          <li style="color: var(--text-muted); font-size: 0.85rem;">Henüz karakter satın almadın.</li>
+        </ul>
+      </div>
+    </aside>
+  </div>
+
+  <script>
+    // --- VERİ MODELİ VE DURUM (STATE) ---
+    let coins = 100; // Başlangıç parası
+    let cart = [];
+    let inventory = [];
+
+    // ÖNEMLİ: Karakterleri buraya ekle.
+    // image: "Resim_Linki" kısmına Garrett Graham'ın internetteki bir fotoğrafının linkini koyabilirsin.
+    const characters = [
+      {
+        id: 1,
+        source: "Off Campus",
+        name: "Garrett Graham",
+        role: "Hokey Takım Kaptanı",
+        price: 150,
+        image: "" // BURAYA RESİM LİNKİ GELECEK (Örn: "https://.../garrett.jpg")
+      },
+      {
+        id: 2,
+        source: "Marvel",
+        name: "Wanda Maximoff",
+        role: "Scarlet Witch",
+        price: 300,
+        image: ""
+      },
+      {
+        id: 3,
+        source: "The Witcher",
+        name: "Geralt of Rivia",
+        role: "Efsunger",
+        price: 250,
+        image: ""
+      },
+      {
+        id: 4,
+        source: "Harry Potter",
+        name: "Hermione Granger",
+        role: "Zeki Büyücü",
+        price: 200,
+        image: ""
+      }
+    ];
+
+    // --- DOM ELEMENTLERİ ---
+    const coinCounter = document.getElementById('coin-counter');
+    const mineBtn = document.getElementById('mine-btn');
+    const marketContainer = document.getElementById('market-container');
+    const cartList = document.getElementById('cart-list');
+    const cartTotal = document.getElementById('cart-total');
+    const checkoutBtn = document.getElementById('checkout-btn');
+    const inventoryList = document.getElementById('inventory-list');
+
+    // --- MİNİ OYUN MANTIĞI ---
+    mineBtn.addEventListener('click', () => {
+      coins += 5;
+      updateUI();
+    });
+
+    // --- MARKETİ OLUŞTURMA VE GÜNCELLEME ---
+    function renderMarket() {
+      marketContainer.innerHTML = '';
+      characters.forEach(char => {
+        const isOwned = inventory.some(item => item.id === char.id);
+        const card = document.createElement('div');
+        card.className = 'character-card';
+
+        // Resim etiketi: Eğer link varsa göster, yoksa yer tutucu (placeholder) göster.
+        const imageHtml = char.image
+          ? `<img src="${char.image}" alt="${char.name}" class="card-img">`
+          : `<div class="card-img">[Resim Yok]</div>`;
+
+        card.innerHTML = `
+          ${imageHtml}
+          <div class="card-info">
+            <div>
+                <div class="char-source">${char.source}</div>
+                <div class="char-name">${char.name}</div>
+                <div class="char-role">${char.role}</div>
+            </div>
+            <div>
+                <div class="char-price">🪙 ${char.price} Coin</div>
+                <button class="btn btn-buy" onclick="addToCart(${char.id})" ${isOwned ? 'disabled' : ''}>
+                ${isOwned ? 'Koleksiyonda' : 'Sepete Ekle'}
+                </button>
+            </div>
+          </div>
+        `;
+        marketContainer.appendChild(card);
+      });
+    }
+
+    // --- SEPET MANTIĞI ---
+    window.addToCart = function(id) {
+      const char = characters.find(c => c.id === id);
+      if (!cart.some(item => item.id === id) && !inventory.some(item => item.id === id)) {
+        cart.push(char);
+        updateUI();
+      }
+    };
+
+    window.removeFromCart = function(id) {
+      cart = cart.filter(item => item.id !== id);
+      updateUI();
+    };
+
+    // --- SATIN ALMA MANTIĞI ---
+    checkoutBtn.addEventListener('click', () => {
+      const total = cart.reduce((sum, item) => sum + item.price, 0);
+
+      if (cart.length === 0) {
+        alert("Sepetin boş!");
+        return;
+      }
+
+      if (coins >= total) {
+        coins -= total;
+        inventory.push(...cart); // Sepettekileri koleksiyona ekle
+        cart = []; // Sepeti boşalt
+        alert("Karakterler koleksiyonuna eklendi!");
+        updateUI();
+      } else {
+        alert(`Yetersiz Coin! Toplam ${total} Coin gerekiyor. Tıklayarak kazanabilirsin.`);
+      }
+    });
+
+    // --- ARAYÜZ (UI) GÜNCELLEME ---
+    function updateUI() {
+      coinCounter.innerText = coins;
+
+      // Sepet Listesi
+      cartList.innerHTML = cart.length === 0 ? '<li style="color: var(--text-muted); font-size: 0.85rem;">Sepetin boş.</li>' : '';
+      let total = 0;
+      cart.forEach(item => {
+        total += item.price;
+        const li = document.createElement('li');
+        li.className = 'cart-item';
+        li.innerHTML = `
+          <span>${item.name} (${item.source})</span>
+          <div>
+            <span style="color: var(--accent-gold);">🪙 ${item.price}</span>
+            <button class="btn-remove" onclick="removeFromCart(${item.id})">✖</button>
+          </div>
+        `;
+        cartList.appendChild(li);
+      });
+      cartTotal.innerText = `${total} Coin`;
+
+      // Koleksiyon Listesi
+      inventoryList.innerHTML = inventory.length === 0 ? '<li style="color: var(--text-muted); font-size: 0.85rem;">Henüz karakter satın almadın.</li>' : '';
+      inventory.forEach(item => {
+        const li = document.createElement('li');
+        li.className = 'inventory-item';
+        li.innerHTML = `<span>${item.name}</span> <span style="color: var(--text-muted); font-size: 0.8rem;">${item.source}</span>`;
+        inventoryList.appendChild(li);
+      });
+
+      renderMarket(); // Market kartlarını da güncelle (buton durumları için)
+    }
+
+    // --- İLK ÇALIŞTIRMA ---
+    updateUI();
+  </script>
+</body>
+</html>
