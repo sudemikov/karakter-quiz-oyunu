@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Off-Campus & Popüler Kültür Pazarı</title>
+  <title>Off-Campus & Popüler Kültür Pazarı (100+ Karakter)</title>
   <style>
     :root {
       --bg: #0f172a;
@@ -69,7 +69,7 @@
     }
     .mode-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
 
-    /* Ayrı Cooldown Kutuları */
+    /* Cooldown Kutuları */
     .cooldown-overlay {
       background: rgba(15, 23, 42, 0.94); border-radius: 10px; border: 1px solid var(--accent-gold);
       padding: 30px 20px; text-align: center; margin-top: 10px;
@@ -103,24 +103,45 @@
     .memory-card.flipped, .memory-card.matched { background: #263349; }
     .memory-card.matched { border-color: var(--success); opacity: 0.75; cursor: default; }
 
-    /* Market */
-    .market-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 16px; }
-    .character-card { background: var(--card-bg); border-radius: 12px; overflow: hidden; border: 1px solid var(--border); display: flex; flex-direction: column; }
-    .card-img-wrap { width: 100%; height: 240px; background-color: #0b1120; display: flex; align-items: center; justify-content: center; overflow: hidden; }
-    .card-img { width: 100%; height: 100%; object-fit: cover; }
-    .card-placeholder { font-size: 3.5rem; }
-    .card-info { padding: 14px; flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; }
-    .char-source { font-size: 0.75rem; color: var(--accent); text-transform: uppercase; font-weight: bold; margin-bottom: 4px; }
-    .char-name { font-size: 1.1rem; font-weight: bold; }
-    .char-role { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 10px; }
-    .char-price { font-size: 1.05rem; color: var(--accent-gold); font-weight: bold; margin-bottom: 10px; text-align: center; }
+    /* Market Arama & Filtreleme */
+    .filter-controls {
+      display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px;
+    }
+    .search-input {
+      width: 100%; padding: 12px 16px; background: var(--card-bg); border: 1px solid var(--border);
+      color: var(--text); border-radius: 8px; font-size: 0.95rem; outline: none;
+    }
+    .search-input:focus { border-color: var(--accent); }
+    .category-pills {
+      display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px;
+    }
+    .pill-btn {
+      background: var(--card-bg); color: var(--text-muted); border: 1px solid var(--border);
+      padding: 6px 14px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; cursor: pointer; white-space: nowrap;
+    }
+    .pill-btn.active { background: var(--accent); color: #0f172a; border-color: var(--accent); }
 
-    .btn { width: 100%; padding: 10px; border-radius: 6px; border: none; font-weight: bold; cursor: pointer; transition: opacity 0.2s; }
+    /* Market Kartları */
+    .market-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 14px; max-height: 700px; overflow-y: auto; padding-right: 4px;
+    }
+    .character-card { background: var(--card-bg); border-radius: 10px; overflow: hidden; border: 1px solid var(--border); display: flex; flex-direction: column; }
+    .card-img-wrap { width: 100%; height: 180px; background-color: #0b1120; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+    .card-img { width: 100%; height: 100%; object-fit: cover; }
+    .card-placeholder { font-size: 2.8rem; }
+    .card-info { padding: 12px; flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; }
+    .char-source { font-size: 0.7rem; color: var(--accent); text-transform: uppercase; font-weight: bold; margin-bottom: 2px; }
+    .char-name { font-size: 0.95rem; font-weight: bold; }
+    .char-role { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 8px; }
+    .char-price { font-size: 0.95rem; color: var(--accent-gold); font-weight: bold; margin-bottom: 8px; text-align: center; }
+
+    .btn { width: 100%; padding: 8px; border-radius: 6px; border: none; font-weight: bold; cursor: pointer; transition: opacity 0.2s; font-size: 0.85rem; }
     .btn-buy { background: #334155; color: var(--text); }
     .btn-buy:hover:not(:disabled) { background: var(--accent); color: #0f172a; }
     .btn-buy:disabled { opacity: 0.5; cursor: not-allowed; }
 
-    /* Sidebar & Leaderboard */
+    /* Sidebar */
     .sidebar { display: flex; flex-direction: column; gap: 20px; }
     .panel { background: var(--card-bg); padding: 20px; border-radius: 12px; border: 1px solid var(--border); }
     .cart-list, .inventory-list { list-style: none; margin-bottom: 15px; max-height: 180px; overflow-y: auto; }
@@ -161,8 +182,8 @@
   <!-- Kayıt Modalı -->
   <div class="modal-overlay" id="auth-modal" style="display:none;">
     <div class="modal-card">
-      <h2 style="color: var(--accent); margin-bottom: 8px;">🏒 Oyuncu Kaydı</h2>
-      <p style="color: var(--text-muted); font-size: 0.9rem;">Pazara katılmak ve global sıralamada yer almak için benzersiz bir kullanıcı adı seç.</p>
+      <h2 style="color: var(--accent); margin-bottom: 8px;">🎬 Koleksiyon Pazarı</h2>
+      <p style="color: var(--text-muted); font-size: 0.9rem;">100+ karakterlik pazara katılmak ve sıralamaya girmek için kullanıcı adı seç.</p>
       <input type="text" id="username-input" placeholder="Kullanıcı adın..." maxlength="15" autocomplete="off">
       <div class="modal-err" id="modal-err"></div>
       <button class="btn btn-checkout" id="start-btn">Koleksiyona Başla</button>
@@ -171,7 +192,7 @@
 
   <header>
     <div>
-      <h1 style="font-size: 1.4rem;">🏒 Karakter Pazarı</h1>
+      <h1 style="font-size: 1.35rem;">🎬 Karakter Koleksiyonu (100+ Popüler Figür)</h1>
       <div class="user-badge" id="user-badge-display">👤 Yükleniyor...</div>
     </div>
     <div class="coin-display" id="coin-display">🪙 <span id="coin-counter">0</span> Coin</div>
@@ -186,18 +207,17 @@
           <button class="mode-tab" id="tab-game">🎴 Hafıza Oyunu</button>
         </div>
 
-        <!-- 1. Quiz Alanı -->
+        <!-- Quiz Alanı -->
         <div id="quiz-wrapper">
           <div class="cooldown-overlay" id="quiz-cooldown-box" style="display:none;">
             <h3 style="color: var(--accent-gold);">⏳ Quiz Hakların Bitti! (6/6)</h3>
-            <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 4px;">Yeni bilgi yarışması soruları için kalan süre:</p>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 4px;">Yeni sorular için kalan süre:</p>
             <div class="timer-text" id="quiz-cooldown-timer">15:00</div>
-            <p style="color: var(--text-muted); font-size: 0.85rem;">Bu sırada diğer sekmeden Hafıza Oyunu oynayabilirsin!</p>
           </div>
 
           <div id="quiz-content">
             <div class="quiz-header">
-              <span id="quiz-category">Off-Campus Quiz</span>
+              <span id="quiz-category">Off-Campus & Popüler Kültür</span>
               <span id="quiz-attempts-left" style="color: var(--accent-gold);">Hak: 6/6</span>
             </div>
             <div class="quiz-question" id="quiz-question">Soru yükleniyor...</div>
@@ -207,13 +227,12 @@
           </div>
         </div>
 
-        <!-- 2. Hafıza Oyunu Alanı -->
+        <!-- Hafıza Oyunu Alanı -->
         <div id="game-wrapper" style="display:none;">
           <div class="cooldown-overlay" id="game-cooldown-box" style="display:none;">
             <h3 style="color: var(--accent-gold);">⏳ Hafıza Oyunu Hakların Bitti! (6/6)</h3>
-            <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 4px;">Yeni kart oyunu hakları için kalan süre:</p>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 4px;">Yeni kart hakları için kalan süre:</p>
             <div class="timer-text" id="game-cooldown-timer">15:00</div>
-            <p style="color: var(--text-muted); font-size: 0.85rem;">Bu sırada Bilgi Yarışması sekmesine geçebilirsin!</p>
           </div>
 
           <div id="game-content">
@@ -230,13 +249,31 @@
         </div>
       </div>
 
+      <!-- Filtreleme & Arama -->
+      <div class="filter-controls">
+        <input type="text" class="search-input" id="search-input" placeholder="🔍 Karakter veya Dizi Ara (Örn: Garrett, Daemon, Eleven, Wanda...)">
+        <div class="category-pills" id="category-pills">
+          <button class="pill-btn active" data-cat="all">Hepsi (100+)</button>
+          <button class="pill-btn" data-cat="Off Campus">Off Campus</button>
+          <button class="pill-btn" data-cat="House of the Dragon">House of the Dragon</button>
+          <button class="pill-btn" data-cat="Game of Thrones">Game of Thrones</button>
+          <button class="pill-btn" data-cat="Stranger Things">Stranger Things</button>
+          <button class="pill-btn" data-cat="Squid Game">Squid Game</button>
+          <button class="pill-btn" data-cat="Harry Potter">Harry Potter</button>
+          <button class="pill-btn" data-cat="Marvel">Marvel</button>
+          <button class="pill-btn" data-cat="The Witcher">The Witcher</button>
+          <button class="pill-btn" data-cat="Breaking Bad">Breaking Bad</button>
+          <button class="pill-btn" data-cat="Peaky Blinders">Peaky Blinders</button>
+        </div>
+      </div>
+
       <!-- Karakter Pazarı -->
-      <h2 class="section-title">👥 Transfer Listesi & Karakterler</h2>
+      <h2 class="section-title">👥 Transfer Listesi (<span id="visible-count">0</span> Karakter)</h2>
       <div class="market-grid" id="market-container"></div>
     </main>
 
     <aside class="sidebar">
-      <!-- Canlı Firebase Liderlik Tablosu -->
+      <!-- Canlı Liderlik Tablosu -->
       <div class="panel">
         <h2 class="section-title">🏆 Global Sıralama</h2>
         <table class="leaderboard-table">
@@ -293,23 +330,135 @@
     const db = firebase.firestore();
 
     // ==========================================
-    // 2. STATE & UYGULAMA DEĞİŞKENLERİ
+    // 2. 100+ KARAKTER VERİ HAVUZU
     // ==========================================
-    const MAX_ATTEMPTS = 6;
-    const COOLDOWN_MINUTES = 15;
+    const characters = [
+      // --- Off Campus / Briar U ---
+      { id: 1, source: "Off Campus", name: "Garrett Graham", role: "Hokey Kaptanı (#1)", price: 50, emoji: "🏒", image: "garretgraham.jpg" },
+      { id: 2, source: "Off Campus", name: "John Logan", role: "Savunma Yıldızı", price: 50, emoji: "🏒", image: "johnlogan.jpg" },
+      { id: 3, source: "Off Campus", name: "Dean Di Laurentis", role: "Hokey Forveti", price: 50, emoji: "🍸", image: "deanlaurentis.jpg" },
+      { id: 4, source: "Off Campus", name: "John Tucker", role: "Hokey Oyuncusu", price: 50, emoji: "🤠", image: "tuckeroffcampus.jpg" },
+      { id: 5, source: "Off Campus", name: "Hannah Wells", role: "Müzisyen & Mentor", price: 45, emoji: "🎶", image: "" },
+      { id: 6, source: "Off Campus", name: "Grace Ivers", role: "Edebiyat Öğrencisi", price: 45, emoji: "📖", image: "" },
+      { id: 7, source: "Off Campus", name: "Allie Hayes", role: "Tiyatrocu & Aktris", price: 45, emoji: "🎭", image: "" },
+      { id: 8, source: "Off Campus", name: "Sabrina James", role: "Hukukçu & Azimli", price: 50, emoji: "⚖️", image: "" },
+      { id: 9, source: "Off Campus", name: "Jake Connelly", role: "Harvard Kaptanı", price: 55, emoji: "🏒", image: "" },
+      { id: 10, source: "Off Campus", name: "Brenna Jensen", role: "Koçun Kızı & Asi", price: 45, emoji: "🎧", image: "" },
 
-    let currentUser = null;
-    let coins = 0;
-    let cart = [];
-    let inventory = [];
+      // --- House of the Dragon ---
+      { id: 11, source: "House of the Dragon", name: "Daemon Targaryen", role: "Serseri Prens", price: 80, emoji: "🐉", image: "" },
+      { id: 12, source: "House of the Dragon", name: "Rhaenyra Targaryen", role: "Siyah Kraliçe", price: 80, emoji: "👑", image: "" },
+      { id: 13, source: "House of the Dragon", name: "Aemond Targaryen", role: "Tek Gözlü Savaşçı", price: 75, emoji: "🗡️", image: "" },
+      { id: 14, source: "House of the Dragon", name: "Alicent Hightower", role: "Yeşil Kraliçe", price: 65, emoji: "🕯️", image: "" },
+      { id: 15, source: "House of the Dragon", name: "Viserys I Targaryen", role: "Barışçıl Kral", price: 60, emoji: "🏰", image: "" },
+      { id: 16, source: "House of the Dragon", name: "Otto Hightower", role: "Kral Eli", price: 55, emoji: "📜", image: "" },
+      { id: 17, source: "House of the Dragon", name: "Criston Cole", role: "Kral Muhafızı", price: 50, emoji: "🛡️", image: "" },
+      { id: 18, source: "House of the Dragon", name: "Corlys Velaryon", role: "Deniz Yılanı", price: 65, emoji: "⚓", image: "" },
+      { id: 19, source: "House of the Dragon", name: "Rhaenys Targaryen", role: "Hiç Olamamış Kraliçe", price: 70, emoji: "🔥", image: "" },
+      { id: 20, source: "House of the Dragon", name: "Jacaerys Velaryon", role: "Varis Prens", price: 55, emoji: "⚔️", image: "" },
 
-    // Bağımsız Hak Sayaçları
-    let quizPlays = 0;
-    let gamePlays = 0;
+      // --- Game of Thrones ---
+      { id: 21, source: "Game of Thrones", name: "Jon Snow", role: "Kuzeydeki Kral", price: 85, emoji: "🐺", image: "" },
+      { id: 22, source: "Game of Thrones", name: "Daenerys Targaryen", role: "Ejderhaların Annesi", price: 90, emoji: "🐲", image: "" },
+      { id: 23, source: "Game of Thrones", name: "Tyrion Lannister", role: "Zeki Stratejist", price: 75, emoji: "🍷", image: "" },
+      { id: 24, source: "Game of Thrones", name: "Arya Stark", role: "Yüzsüz Suikastçı", price: 80, emoji: "🗡️", image: "" },
+      { id: 25, source: "Game of Thrones", name: "Cersei Lannister", role: "Hırslı Kraliçe", price: 70, emoji: "🦁", image: "" },
+      { id: 26, source: "Game of Thrones", name: "Jaime Lannister", role: "Kralkatili", price: 75, emoji: "🛡️", image: "" },
+      { id: 27, source: "Game of Thrones", name: "Sansa Stark", role: "Kuzeyin Leydisi", price: 65, emoji: "❄️", image: "" },
+      { id: 28, source: "Game of Thrones", name: "Ned Stark", role: "Kışyarı Lordu", price: 60, emoji: "⚔️", image: "" },
+      { id: 29, source: "Game of Thrones", name: "Robb Stark", role: "Genç Kurt", price: 65, emoji: "🐺", image: "" },
+      { id: 30, source: "Game of Thrones", name: "Night King", role: "Akgezen Lideri", price: 95, emoji: "❄️", image: "" },
 
-    let quizInterval = null;
-    let gameInterval = null;
+      // --- Stranger Things ---
+      { id: 31, source: "Stranger Things", name: "Eleven", role: "Telekinetik Güç", price: 85, emoji: "🧇", image: "" },
+      { id: 32, source: "Stranger Things", name: "Mike Wheeler", role: "Grup Lideri", price: 50, emoji: "🚲", image: "" },
+      { id: 33, source: "Stranger Things", name: "Dustin Henderson", role: "Teknoloji Dehası", price: 60, emoji: "🧢", image: "" },
+      { id: 34, source: "Stranger Things", name: "Steve Harrington", role: "Çocukların Koruyucusu", price: 75, emoji: "🏏", image: "" },
+      { id: 35, source: "Stranger Things", name: "Eddie Munson", role: "Hellfire Lideri", price: 75, emoji: "🎸", image: "" },
+      { id: 36, source: "Stranger Things", name: "Jim Hopper", role: "Hawkins Şerifi", price: 70, emoji: "👮", image: "" },
+      { id: 37, source: "Stranger Things", name: "Max Mayfield", role: "Cesur Patenci", price: 65, emoji: "🛹", image: "" },
+      { id: 38, source: "Stranger Things", name: "Vecna (001)", role: "Upside Down Hakimi", price: 90, emoji: "🕰️", image: "" },
+      { id: 39, source: "Stranger Things", name: "Nancy Wheeler", role: "Araştırmacı Gazeteci", price: 55, emoji: "🔫", image: "" },
+      { id: 40, source: "Stranger Things", name: "Robin Buckley", role: "Şifre Çözücü", price: 55, emoji: "🎺", image: "" },
 
+      // --- Squid Game ---
+      { id: 41, source: "Squid Game", name: "Seong Gi-hun (456)", role: "Nihai Kazanan", price: 75, emoji: "🦑", image: "" },
+      { id: 42, source: "Squid Game", name: "Cho Sang-woo (218)", role: "SNU Mezunu Dahi", price: 65, emoji: "👓", image: "" },
+      { id: 43, source: "Squid Game", name: "Kang Sae-byeok (067)", role: "Gözüpek Sığınmacı", price: 80, emoji: "🔪", image: "" },
+      { id: 44, source: "Squid Game", name: "Abdul Ali (199)", role: "Güvenilir & Güçlü", price: 60, emoji: "✊", image: "" },
+      { id: 45, source: "Squid Game", name: "Front Man (Yönetici)", role: "Oyunların Lideri", price: 85, emoji: "🎭", image: "" },
+      { id: 46, source: "Squid Game", name: "Hwang Jun-ho", role: "Gizli Polis", price: 60, emoji: "📱", image: "" },
+      { id: 47, source: "Squid Game", name: "Oh Il-nam (001)", role: "Yaşlı Kurucu", price: 75, emoji: "👴", image: "" },
+      { id: 48, source: "Squid Game", name: "Jang Deok-su (101)", role: "Acımasız Mafya", price: 50, emoji: "🐍", image: "" },
+      { id: 49, source: "Squid Game", name: "Han Mi-nyeo (212)", role: "Kurnaz Oyuncu", price: 45, emoji: "⚡", image: "" },
+      { id: 50, source: "Squid Game", name: "Kırmızı Muhafız (Üçgen)", role: "Saha İnfazcısı", price: 40, emoji: "🔺", image: "" },
+
+      // --- Harry Potter ---
+      { id: 51, source: "Harry Potter", name: "Harry Potter", role: "Seçilmiş Kişi", price: 85, emoji: "⚡", image: "" },
+      { id: 52, source: "Harry Potter", name: "Hermione Granger", role: "Zeki Cadı", price: 85, emoji: "📚", image: "" },
+      { id: 53, source: "Harry Potter", name: "Ron Weasley", role: "Sadık Dost", price: 60, emoji: "♟️", image: "" },
+      { id: 54, source: "Harry Potter", name: "Albus Dumbledore", role: "Büyük Büyücü", price: 95, emoji: "🧙‍♂️", image: "" },
+      { id: 55, source: "Harry Potter", name: "Lord Voldemort", role: "Karanlık Lord", price: 90, emoji: "🐍", image: "" },
+      { id: 56, source: "Harry Potter", name: "Severus Snape", role: "İksir Ustası", price: 80, emoji: "🧪", image: "" },
+      { id: 57, source: "Harry Potter", name: "Draco Malfoy", role: "Slytherin Prensi", price: 65, emoji: "🍏", image: "" },
+      { id: 58, source: "Harry Potter", name: "Sirius Black", role: "Patiayak", price: 75, emoji: "🐺", image: "" },
+      { id: 59, source: "Harry Potter", name: "Luna Lovegood", role: "Özgür Ruhlu Büyücü", price: 60, emoji: "👓", image: "" },
+      { id: 60, source: "Harry Potter", name: "Bellatrix Lestrange", role: "Ölüm Yiyen", price: 75, emoji: "🗡️", image: "" },
+
+      // --- Marvel ---
+      { id: 61, source: "Marvel", name: "Tony Stark (Iron Man)", role: "Dahi & Milyarder", price: 90, emoji: "🤖", image: "" },
+      { id: 62, source: "Marvel", name: "Steve Rogers (Cap)", role: "İlk Yenilmez", price: 80, emoji: "🛡️", image: "" },
+      { id: 63, source: "Marvel", name: "Wanda Maximoff", role: "Scarlet Witch", price: 95, emoji: "🔮", image: "" },
+      { id: 64, source: "Marvel", name: "Thor Odinson", role: "Yıldırım Tanrısı", price: 85, emoji: "⚡", image: "" },
+      { id: 65, source: "Marvel", name: "Loki Laufeyson", role: "Fesatlık Tanrısı", price: 85, emoji: "👑", image: "" },
+      { id: 66, source: "Marvel", name: "Peter Parker (Spidey)", role: "Dost Canlısı Komşu", price: 80, emoji: "🕷️", image: "" },
+      { id: 67, source: "Marvel", name: "Natasha Romanoff", role: "Black Widow", price: 70, emoji: "🎯", image: "" },
+      { id: 68, source: "Marvel", name: "Doctor Strange", role: "Yüce Büyücü", price: 85, emoji: "⏳", image: "" },
+      { id: 69, source: "Marvel", name: "Thanos", role: "Deli Titan", price: 95, emoji: "🧤", image: "" },
+      { id: 70, source: "Marvel", name: "Deadpool", role: "Çenesi Düşük Paralı Asker", price: 80, emoji: "⚔️", image: "" },
+
+      // --- The Witcher ---
+      { id: 71, source: "The Witcher", name: "Geralt of Rivia", role: "Ak Kurt", price: 85, emoji: "🐺", image: "" },
+      { id: 72, source: "The Witcher", name: "Yennefer of Vengerberg", role: "Güçlü Büyücü", price: 80, emoji: "✨", image: "" },
+      { id: 73, source: "The Witcher", name: "Cirilla (Ciri)", role: "Zamanın Çocuğu", price: 90, emoji: "⚔️", image: "" },
+      { id: 74, source: "The Witcher", name: "Jaskier (Dandelion)", role: "Ozan & Şarkıcı", price: 45, emoji: "🪕", image: "" },
+      { id: 75, source: "The Witcher", name: "Triss Merigold", role: "Büyücü Şifacı", price: 70, emoji: "🍂", image: "" },
+      { id: 76, source: "The Witcher", name: "Vesemir", role: "Kurt Okulu Ustası", price: 65, emoji: "🏰", image: "" },
+      { id: 77, source: "The Witcher", name: "Cahir", role: "Nilfgaard Şövalyesi", price: 50, emoji: "🦅", image: "" },
+      { id: 78, source: "The Witcher", name: "Vilgefortz", role: "Kudretli Büyücü", price: 80, emoji: "🔥", image: "" },
+      { id: 79, source: "The Witcher", name: "Fringilla Vigo", role: "Nilfgaard Büyücüsü", price: 60, emoji: "🔮", image: "" },
+      { id: 80, source: "The Witcher", name: "Regis", role: "Yüksek Vampir", price: 75, emoji: "🍷", image: "" },
+
+      // --- Breaking Bad & Better Call Saul ---
+      { id: 81, source: "Breaking Bad", name: "Walter White (Heisenberg)", role: "Kimya Dehası & Baron", price: 95, emoji: "🧪", image: "" },
+      { id: 82, source: "Breaking Bad", name: "Jesse Pinkman", role: "Sadık Ortak", price: 75, emoji: "🧢", image: "" },
+      { id: 83, source: "Breaking Bad", name: "Saul Goodman", role: "Kurnaz Avukat", price: 70, emoji: "⚖️", image: "" },
+      { id: 84, source: "Breaking Bad", name: "Gus Fring", role: "Kusursuz İş İnsanı", price: 85, emoji: "🍗", image: "" },
+      { id: 85, source: "Breaking Bad", name: "Mike Ehrmantraut", role: "Sessiz Çözücü", price: 75, emoji: "🔫", image: "" },
+      { id: 86, source: "Breaking Bad", name: "Hank Schrader", role: "DEA Ajanı", price: 65, emoji: "💎", image: "" },
+      { id: 87, source: "Breaking Bad", name: "Kim Wexler", role: "Başarılı Hukukçu", price: 70, emoji: "📁", image: "" },
+      { id: 88, source: "Breaking Bad", name: "Lalo Salamanca", role: "Tehlikeli Karizma", price: 80, emoji: "🕶️", image: "" },
+      { id: 89, source: "Breaking Bad", name: "Nacho Varga", role: "Cesur Kartel Üyesi", price: 65, emoji: "🏍️", image: "" },
+      { id: 90, source: "Breaking Bad", name: "Tuco Salamanca", role: "Öngörülemez Psikopat", price: 60, emoji: "💥", image: "" },
+
+      // --- Peaky Blinders & The Boys / Diğerleri ---
+      { id: 91, source: "Peaky Blinders", name: "Thomas Shelby", role: "Çete Lideri & Zeka", price: 90, emoji: "🚬", image: "" },
+      { id: 92, source: "Peaky Blinders", name: "Arthur Shelby", role: "Vahşi Savaşçı", price: 70, emoji: "🥃", image: "" },
+      { id: 93, source: "Peaky Blinders", name: "Polly Gray", role: "Ailenin Beyni", price: 75, emoji: "👑", image: "" },
+      { id: 94, source: "Peaky Blinders", name: "Alfie Solomons", role: "Yahudi Çete Patronu", price: 80, emoji: "🍞", image: "" },
+      { id: 95, source: "Peaky Blinders", name: "John Shelby", role: "Gözükara Kardeş", price: 60, emoji: "🧢", image: "" },
+      { id: 96, source: "The Boys", name: "Homelander", role: "Kibirli Süper Güç", price: 95, emoji: "🥛", image: "" },
+      { id: 97, source: "The Boys", name: "Billy Butcher", role: "İntikam Peşinde", price: 85, emoji: "⚡", image: "" },
+      { id: 98, source: "The Boys", name: "Hughie Campbell", role: "Grup Masumu", price: 50, emoji: "👕", image: "" },
+      { id: 99, source: "The Boys", name: "Soldier Boy", role: "Eski Çağ Kahramanı", price: 80, emoji: "🛡️", image: "" },
+      { id: 100, source: "The Boys", name: "Starlight (Annie)", role: "Işık Saçan Direnişçi", price: 70, emoji: "🌟", image: "" },
+      { id: 101, source: "Sherlock", name: "Sherlock Holmes", role: "Danışman Dedektif", price: 90, emoji: "🎻", image: "" },
+      { id: 102, source: "Sherlock", name: "John Watson", role: "Doktor & Yoldaş", price: 65, emoji: "🩺", image: "" }
+    ];
+
+    // ==========================================
+    // 3. GENİŞLETİLMİŞ SORU HAVUZU
+    // ==========================================
     const questions = [
       {
         category: "Off Campus / The Deal",
@@ -324,42 +473,77 @@
         correct: 0
       },
       {
-        category: "Off Campus / The Deal",
-        question: "Hannah'nın üniversitedeki ana bölüm alanı nedir?",
-        options: ["Hukuk", "Müzik / Klasik Kompozisyon", "Edebiyat", "Spor Yönetimi"],
-        correct: 1
-      },
-      {
         category: "Off Campus / The Score",
         question: "Dean Di Laurentis ile Allie Hayes arasındaki hikayeyi anlatan kitap hangisidir?",
         options: ["The Mistake", "The Goal", "The Score", "The Legacy"],
         correct: 2
       },
       {
-        category: "Off Campus / The Mistake",
-        question: "John Logan, serinin ikinci kitabında kime aşık olur?",
-        options: ["Hannah", "Grace", "Allie", "Sabrina"],
+        category: "House of the Dragon",
+        question: "Prens Daemon Targaryen'in bindiği kızıl ejderhanın adı nedir?",
+        options: ["Vhagar", "Caraxes", "Syrax", "Sunfyre"],
         correct: 1
       },
       {
-        category: "Off Campus / The Goal",
-        question: "John Tucker ile Sabrina James'in hikayesini anlatan serinin 4. kitabı hangisidir?",
-        options: ["The Score", "The Goal", "The Dare", "The Play"],
+        category: "House of the Dragon",
+        question: "Aemond Targaryen hangi devasa antik ejderhayı talep etmiştir?",
+        options: ["Vhagar", "Balerion", "Vermithor", "Meleys"],
+        correct: 0
+      },
+      {
+        category: "Squid Game",
+        question: "Squid Game'in 1. oyununda söylenen şarkının simgelediği dev bebek hangisidir?",
+        options: ["Young-hee", "Mugunghwa", "Min-ji", "Chul-soo"],
+        correct: 0
+      },
+      {
+        category: "Stranger Things",
+        question: "Eddie Munson, Upside Down'da yarasaları üzerine çekmek için hangi şarkıyı gitarla çalmıştır?",
+        options: ["Master of Puppets", "Running Up That Hill", "Should I Stay", "Sweet Child O' Mine"],
+        correct: 0
+      },
+      {
+        category: "Harry Potter",
+        question: "Gryffindor binasının simgesi hangi hayvandır?",
+        options: ["Porsuk", "Yılan", "Kartal", "Aslan"],
+        correct: 3
+      },
+      {
+        category: "Marvel",
+        question: "Wanda Maximoff'un Westview kasabasını kontrol altına aldığı dizinin adı nedir?",
+        options: ["WandaVision", "Loki", "Agatha All Along", "Secret Invasion"],
+        correct: 0
+      },
+      {
+        category: "Peaky Blinders",
+        question: "Shelby ailesinin ana merkezi olan İngiltere şehri hangisidir?",
+        options: ["Londra", "Birmingham", "Manchester", "Liverpool"],
         correct: 1
       }
     ];
 
-    const characters = [
-      { id: 1, source: "Off Campus", name: "Garrett Graham", role: "Briar Hokey Kaptanı (#1)", price: 50, emoji: "🏒", image: "garrettgraham.jpg" },
-      { id: 2, source: "Off Campus", name: "John Logan", role: "Hokey Oyuncusu", price: 50, emoji: "🏒", image: "johnlogan.jpg" },
-      { id: 3, source: "Off Campus", name: "Dean Di Laurentis", role: "Hokey Oyuncusu", price: 50, emoji: "🏒", image: "deanlaurentis.jpg" },
-      { id: 4, source: "Off Campus", name: "John Tucker", role: "Hokey Oyuncusu", price: 50, emoji: "🏒", image: "tuckeroffcampus.jpg" }
-    ];
+    // ==========================================
+    // 4. UYGULAMA DURUMU & DEĞİŞKENLER
+    // ==========================================
+    const MAX_ATTEMPTS = 6;
+    const COOLDOWN_MINUTES = 15;
 
+    let currentUser = null;
+    let coins = 0;
+    let cart = [];
+    let inventory = [];
+
+    let quizPlays = 0;
+    let gamePlays = 0;
+    let quizInterval = null;
+    let gameInterval = null;
+
+    let currentCategory = 'all';
+    let currentSearchQuery = '';
     let currentQuestionIndex = 0;
 
-    // Hafıza Oyunu Değişkenleri
-    const memoryEmojis = ['🏒', '📚', '⚡', '🐺', '🎭', '🔥'];
+    // Hafıza Oyunu
+    const memoryEmojis = ['🏒', '🐉', '⚡', '🐺', '🧇', '🧪'];
     let memoryDeck = [];
     let flippedCards = [];
     let matchedCount = 0;
@@ -372,7 +556,6 @@
     const modalErr = document.getElementById('modal-err');
     const startBtn = document.getElementById('start-btn');
     const userBadgeDisplay = document.getElementById('user-badge-display');
-
     const coinDisplay = document.getElementById('coin-display');
     const coinCounter = document.getElementById('coin-counter');
 
@@ -399,6 +582,9 @@
     const moveCounterEl = document.getElementById('move-counter');
     const matchCounterEl = document.getElementById('match-counter');
 
+    const searchInput = document.getElementById('search-input');
+    const categoryPills = document.getElementById('category-pills');
+    const visibleCountEl = document.getElementById('visible-count');
     const marketContainer = document.getElementById('market-container');
     const cartList = document.getElementById('cart-list');
     const cartTotal = document.getElementById('cart-total');
@@ -407,14 +593,13 @@
     const leaderboardBody = document.getElementById('leaderboard-body');
 
     // ==========================================
-    // 3. FIREBASE KULLANICI KONTROLÜ
+    // 5. FIREBASE AUTH & OTURUM
     // ==========================================
     async function checkAuth() {
       const savedUser = localStorage.getItem('karakterPazari_user');
       if (savedUser) {
         currentUser = savedUser;
         userBadgeDisplay.innerText = `👤 ${currentUser}`;
-        
         try {
           const doc = await db.collection("users").doc(currentUser.toLowerCase()).get();
           if (doc.exists) {
@@ -423,9 +608,8 @@
             inventory = data.inventory || [];
           }
         } catch (e) {
-          console.error("Firestore verisi alınamadı:", e);
+          console.error(e);
         }
-
         initApp();
       } else {
         authModal.style.display = 'flex';
@@ -452,7 +636,7 @@
         const userDoc = await userDocRef.get();
 
         if (userDoc.exists) {
-          modalErr.innerText = 'Bu kullanıcı adı daha önce başka biri tarafından alınmış!';
+          modalErr.innerText = 'Bu kullanıcı adı zaten alınmış!';
           startBtn.disabled = false;
           startBtn.innerText = 'Koleksiyona Başla';
           return;
@@ -466,7 +650,6 @@
           createdAt: firebase.firestore.FieldValue.serverTimestamp()
         });
       } catch (err) {
-        console.error(err);
         modalErr.innerText = 'Veritabanı bağlantı hatası!';
         startBtn.disabled = false;
         startBtn.innerText = 'Koleksiyona Başla';
@@ -486,21 +669,18 @@
 
     function initApp() {
       listenLeaderboard();
-      
-      // Hakları ve Cooldown durumlarını bağımsız kontrol et
       quizPlays = parseInt(localStorage.getItem('karakterPazari_quizPlays') || '0', 10);
       gamePlays = parseInt(localStorage.getItem('karakterPazari_gamePlays') || '0', 10);
 
       checkQuizCooldown();
       checkGameCooldown();
-
       loadQuestion();
       startMemoryGame();
       updateUI();
     }
 
     // ==========================================
-    // 4. FIREBASE REALTIME LİDERLİK TABLOSU
+    // 6. REALTIME LİDERLİK TABLOSU
     // ==========================================
     function listenLeaderboard() {
       db.collection("users")
@@ -542,7 +722,7 @@
           inventoryCount: inventory.length
         });
       } catch (err) {
-        console.error("Senkronizasyon hatası:", err);
+        console.error(err);
       }
     }
 
@@ -564,10 +744,8 @@
     }
 
     // ==========================================
-    // 5. AYRI COOLDOWN YÖNETİMİ
+    // 7. COOLDOWN YÖNETİMİ
     // ==========================================
-
-    // Quiz Cooldown
     function triggerQuizCooldown() {
       const expireTime = Date.now() + COOLDOWN_MINUTES * 60 * 1000;
       localStorage.setItem('karakterPazari_quizCooldown', expireTime);
@@ -582,7 +760,6 @@
         updateQuizAttemptsDisplay();
         return;
       }
-
       const remaining = parseInt(expireTime, 10) - Date.now();
       if (remaining > 0) {
         quizCooldownBox.style.display = 'block';
@@ -621,7 +798,6 @@
       quizInterval = setInterval(tick, 1000);
     }
 
-    // Hafıza Oyunu Cooldown
     function triggerGameCooldown() {
       const expireTime = Date.now() + COOLDOWN_MINUTES * 60 * 1000;
       localStorage.setItem('karakterPazari_gameCooldown', expireTime);
@@ -636,7 +812,6 @@
         updateGameAttemptsDisplay();
         return;
       }
-
       const remaining = parseInt(expireTime, 10) - Date.now();
       if (remaining > 0) {
         gameCooldownBox.style.display = 'block';
@@ -686,7 +861,6 @@
       gameAttemptsLeft.innerText = `Hak: ${remaining}/${MAX_ATTEMPTS}`;
     }
 
-    // Sekmeler
     tabQuiz.addEventListener('click', () => {
       tabQuiz.classList.add('active');
       tabGame.classList.remove('active');
@@ -702,7 +876,7 @@
     });
 
     // ==========================================
-    // 6. QUIZ MANTIĞI (6 Hak)
+    // 8. QUIZ MANTIĞI
     // ==========================================
     function loadQuestion() {
       const q = questions[currentQuestionIndex];
@@ -742,7 +916,6 @@
       quizPlays++;
       localStorage.setItem('karakterPazari_quizPlays', quizPlays);
       updateQuizAttemptsDisplay();
-
       nextBtn.style.display = 'inline-block';
     }
 
@@ -757,7 +930,7 @@
     });
 
     // ==========================================
-    // 7. HAFIZA OYUNU MANTIĞI (6 Hak)
+    // 9. HAFIZA OYUNU
     // ==========================================
     function startMemoryGame() {
       const pairSet = [...memoryEmojis, ...memoryEmojis].sort(() => Math.random() - 0.5);
@@ -836,11 +1009,41 @@
     }
 
     // ==========================================
-    // 8. MARKET & SEPET İŞLEMLERİ
+    // 10. ARAMA, FİLTRELEME & MARKET RENDER
     // ==========================================
+    searchInput.addEventListener('input', (e) => {
+      currentSearchQuery = e.target.value.toLowerCase().trim();
+      renderMarket();
+    });
+
+    categoryPills.addEventListener('click', (e) => {
+      if (!e.target.classList.contains('pill-btn')) return;
+      document.querySelectorAll('.pill-btn').forEach(btn => btn.classList.remove('active'));
+      e.target.classList.add('active');
+      currentCategory = e.target.getAttribute('data-cat');
+      renderMarket();
+    });
+
     function renderMarket() {
       marketContainer.innerHTML = '';
-      characters.forEach(char => {
+
+      // Filtreleme
+      const filtered = characters.filter(char => {
+        const matchesCategory = (currentCategory === 'all') || (char.source === currentCategory);
+        const matchesSearch = char.name.toLowerCase().includes(currentSearchQuery) || 
+                              char.source.toLowerCase().includes(currentSearchQuery) || 
+                              char.role.toLowerCase().includes(currentSearchQuery);
+        return matchesCategory && matchesSearch;
+      });
+
+      visibleCountEl.innerText = filtered.length;
+
+      if (filtered.length === 0) {
+        marketContainer.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 40px;">Aradığın kriterlere uygun karakter bulunamadı.</div>`;
+        return;
+      }
+
+      filtered.forEach(char => {
         const isOwned = inventory.some(item => item.id === char.id);
         const card = document.createElement('div');
         card.className = 'character-card';
@@ -891,7 +1094,6 @@
         coins -= total;
         inventory.push(...cart);
         cart = [];
-        
         await syncUserData();
         showToast('Karakterler koleksiyonuna eklendi! 🎉', 'success');
         updateUI();
