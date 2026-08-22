@@ -59,7 +59,7 @@
     .modal-card input:focus { border-color: var(--accent); }
     .modal-err { color: var(--danger); font-size: 0.85rem; margin-bottom: 15px; min-height: 20px; text-align: left; }
 
-    /* Kazanç Paneli & Cooldown */
+    /* Kazanç Paneli */
     .earn-box { background: var(--card-bg); padding: 25px; border-radius: 12px; margin-bottom: 25px; border: 1px solid var(--border); position: relative; }
     .mode-tabs { display: flex; gap: 8px; margin-bottom: 18px; border-bottom: 1px solid var(--border); }
     .mode-tab {
@@ -69,6 +69,7 @@
     }
     .mode-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
 
+    /* Ayrı Cooldown Kutuları */
     .cooldown-overlay {
       background: rgba(15, 23, 42, 0.94); border-radius: 10px; border: 1px solid var(--accent-gold);
       padding: 30px 20px; text-align: center; margin-top: 10px;
@@ -149,7 +150,7 @@
     @keyframes toast-out { to { opacity: 0; transform: translateX(20px); } }
   </style>
 
-  <!-- Firebase App & Firestore Compatibility SDK -->
+  <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 </head>
@@ -185,37 +186,47 @@
           <button class="mode-tab" id="tab-game">🎴 Hafıza Oyunu</button>
         </div>
 
-        <!-- Cooldown Kutusu -->
-        <div class="cooldown-overlay" id="cooldown-box" style="display:none;">
-          <h3 style="color: var(--accent-gold);">⏳ Enerjin Tükendi!</h3>
-          <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 4px;">Yeni oyun hakkı için dinleniyorsun. Kalan süre:</p>
-          <div class="timer-text" id="cooldown-timer">15:00</div>
-          <p style="color: var(--text-muted); font-size: 0.85rem;">Süre bitene kadar marketi gezebilir ve alışveriş yapabilirsin.</p>
+        <!-- 1. Quiz Alanı -->
+        <div id="quiz-wrapper">
+          <div class="cooldown-overlay" id="quiz-cooldown-box" style="display:none;">
+            <h3 style="color: var(--accent-gold);">⏳ Quiz Hakların Bitti! (6/6)</h3>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 4px;">Yeni bilgi yarışması soruları için kalan süre:</p>
+            <div class="timer-text" id="quiz-cooldown-timer">15:00</div>
+            <p style="color: var(--text-muted); font-size: 0.85rem;">Bu sırada diğer sekmeden Hafıza Oyunu oynayabilirsin!</p>
+          </div>
+
+          <div id="quiz-content">
+            <div class="quiz-header">
+              <span id="quiz-category">Off-Campus Quiz</span>
+              <span id="quiz-attempts-left" style="color: var(--accent-gold);">Hak: 6/6</span>
+            </div>
+            <div class="quiz-question" id="quiz-question">Soru yükleniyor...</div>
+            <div class="options-grid" id="options-container"></div>
+            <div class="quiz-feedback" id="quiz-feedback"></div>
+            <button class="next-btn" id="next-btn">Sonraki Soru ➔</button>
+          </div>
         </div>
 
-        <!-- Quiz Paneli -->
-        <div id="quiz-content">
-          <div class="quiz-header">
-            <span id="quiz-category">Off-Campus Quiz</span>
-            <span>Ödül: +25 Coin</span>
+        <!-- 2. Hafıza Oyunu Alanı -->
+        <div id="game-wrapper" style="display:none;">
+          <div class="cooldown-overlay" id="game-cooldown-box" style="display:none;">
+            <h3 style="color: var(--accent-gold);">⏳ Hafıza Oyunu Hakların Bitti! (6/6)</h3>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 4px;">Yeni kart oyunu hakları için kalan süre:</p>
+            <div class="timer-text" id="game-cooldown-timer">15:00</div>
+            <p style="color: var(--text-muted); font-size: 0.85rem;">Bu sırada Bilgi Yarışması sekmesine geçebilirsin!</p>
           </div>
-          <div class="quiz-question" id="quiz-question">Soru yükleniyor...</div>
-          <div class="options-grid" id="options-container"></div>
-          <div class="quiz-feedback" id="quiz-feedback"></div>
-          <button class="next-btn" id="next-btn">Sonraki Soru ➔</button>
-        </div>
 
-        <!-- Hafıza Oyunu Paneli -->
-        <div id="game-content" style="display:none;">
-          <div class="quiz-header">
-            <span>Kartları Eşleştir</span>
-            <span>Ödül: Az hamlede yüksek kazanç</span>
+          <div id="game-content">
+            <div class="quiz-header">
+              <span>Kartları Eşleştir</span>
+              <span id="game-attempts-left" style="color: var(--accent-gold);">Hak: 6/6</span>
+            </div>
+            <div class="game-meta">
+              <span>Hamle: <strong id="move-counter">0</strong></span>
+              <span>Eşleşen: <strong id="match-counter">0</strong>/6</span>
+            </div>
+            <div class="memory-grid" id="memory-grid"></div>
           </div>
-          <div class="game-meta">
-            <span>Hamle: <strong id="move-counter">0</strong></span>
-            <span>Eşleşen: <strong id="match-counter">0</strong>/6</span>
-          </div>
-          <div class="memory-grid" id="memory-grid"></div>
         </div>
       </div>
 
@@ -284,11 +295,20 @@
     // ==========================================
     // 2. STATE & UYGULAMA DEĞİŞKENLERİ
     // ==========================================
+    const MAX_ATTEMPTS = 6;
     const COOLDOWN_MINUTES = 15;
+
     let currentUser = null;
     let coins = 0;
     let cart = [];
     let inventory = [];
+
+    // Bağımsız Hak Sayaçları
+    let quizPlays = 0;
+    let gamePlays = 0;
+
+    let quizInterval = null;
+    let gameInterval = null;
 
     const questions = [
       {
@@ -314,6 +334,18 @@
         question: "Dean Di Laurentis ile Allie Hayes arasındaki hikayeyi anlatan kitap hangisidir?",
         options: ["The Mistake", "The Goal", "The Score", "The Legacy"],
         correct: 2
+      },
+      {
+        category: "Off Campus / The Mistake",
+        question: "John Logan, serinin ikinci kitabında kime aşık olur?",
+        options: ["Hannah", "Grace", "Allie", "Sabrina"],
+        correct: 1
+      },
+      {
+        category: "Off Campus / The Goal",
+        question: "John Tucker ile Sabrina James'in hikayesini anlatan serinin 4. kitabı hangisidir?",
+        options: ["The Score", "The Goal", "The Dare", "The Play"],
+        correct: 1
       }
     ];
 
@@ -325,15 +357,14 @@
     ];
 
     let currentQuestionIndex = 0;
-    let quizQuestionsAnsweredInRound = 0;
 
+    // Hafıza Oyunu Değişkenleri
     const memoryEmojis = ['🏒', '📚', '⚡', '🐺', '🎭', '🔥'];
     let memoryDeck = [];
     let flippedCards = [];
     let matchedCount = 0;
     let moveCount = 0;
     let boardLocked = false;
-    let cooldownInterval = null;
 
     // DOM Elementleri
     const authModal = document.getElementById('auth-modal');
@@ -344,19 +375,26 @@
 
     const coinDisplay = document.getElementById('coin-display');
     const coinCounter = document.getElementById('coin-counter');
-    const cooldownBox = document.getElementById('cooldown-box');
-    const cooldownTimer = document.getElementById('cooldown-timer');
-    const quizContent = document.getElementById('quiz-content');
-    const gameContent = document.getElementById('game-content');
+
     const tabQuiz = document.getElementById('tab-quiz');
     const tabGame = document.getElementById('tab-game');
+    const quizWrapper = document.getElementById('quiz-wrapper');
+    const gameWrapper = document.getElementById('game-wrapper');
 
+    const quizCooldownBox = document.getElementById('quiz-cooldown-box');
+    const quizCooldownTimer = document.getElementById('quiz-cooldown-timer');
+    const quizContent = document.getElementById('quiz-content');
     const quizCategory = document.getElementById('quiz-category');
+    const quizAttemptsLeft = document.getElementById('quiz-attempts-left');
     const quizQuestion = document.getElementById('quiz-question');
     const optionsContainer = document.getElementById('options-container');
     const quizFeedback = document.getElementById('quiz-feedback');
     const nextBtn = document.getElementById('next-btn');
 
+    const gameCooldownBox = document.getElementById('game-cooldown-box');
+    const gameCooldownTimer = document.getElementById('game-cooldown-timer');
+    const gameContent = document.getElementById('game-content');
+    const gameAttemptsLeft = document.getElementById('game-attempts-left');
     const memoryGrid = document.getElementById('memory-grid');
     const moveCounterEl = document.getElementById('move-counter');
     const matchCounterEl = document.getElementById('match-counter');
@@ -369,7 +407,7 @@
     const leaderboardBody = document.getElementById('leaderboard-body');
 
     // ==========================================
-    // 3. FIREBASE KULLANICI KONTROLÜ & OTURUM
+    // 3. FIREBASE KULLANICI KONTROLÜ
     // ==========================================
     async function checkAuth() {
       const savedUser = localStorage.getItem('karakterPazari_user');
@@ -385,7 +423,7 @@
             inventory = data.inventory || [];
           }
         } catch (e) {
-          console.error("Firestore kullanıcı verisi çekilemedi:", e);
+          console.error("Firestore verisi alınamadı:", e);
         }
 
         initApp();
@@ -429,7 +467,7 @@
         });
       } catch (err) {
         console.error(err);
-        modalErr.innerText = 'Veritabanı bağlantı hatası! Firestore kurallarını test moduna aldığından emin ol.';
+        modalErr.innerText = 'Veritabanı bağlantı hatası!';
         startBtn.disabled = false;
         startBtn.innerText = 'Koleksiyona Başla';
         return;
@@ -448,7 +486,14 @@
 
     function initApp() {
       listenLeaderboard();
-      checkCooldown();
+      
+      // Hakları ve Cooldown durumlarını bağımsız kontrol et
+      quizPlays = parseInt(localStorage.getItem('karakterPazari_quizPlays') || '0', 10);
+      gamePlays = parseInt(localStorage.getItem('karakterPazari_gamePlays') || '0', 10);
+
+      checkQuizCooldown();
+      checkGameCooldown();
+
       loadQuestion();
       startMemoryGame();
       updateUI();
@@ -485,8 +530,6 @@
             leaderboardBody.appendChild(tr);
             idx++;
           });
-        }, (error) => {
-          console.error("Liderlik tablosu dinlenemedi:", error);
         });
     }
 
@@ -499,11 +542,10 @@
           inventoryCount: inventory.length
         });
       } catch (err) {
-        console.error("Veri senkronizasyonu başarısız:", err);
+        console.error("Senkronizasyon hatası:", err);
       }
     }
 
-    // Toast
     function showToast(msg, type = 'info') {
       const stack = document.getElementById('toast-stack');
       const el = document.createElement('div');
@@ -522,85 +564,145 @@
     }
 
     // ==========================================
-    // 5. 15 DAKİKA COOLDOWN
+    // 5. AYRI COOLDOWN YÖNETİMİ
     // ==========================================
-    function triggerCooldown() {
+
+    // Quiz Cooldown
+    function triggerQuizCooldown() {
       const expireTime = Date.now() + COOLDOWN_MINUTES * 60 * 1000;
-      localStorage.setItem('karakterPazari_cooldown', expireTime);
-      checkCooldown();
+      localStorage.setItem('karakterPazari_quizCooldown', expireTime);
+      checkQuizCooldown();
     }
 
-    function checkCooldown() {
-      const expireTime = localStorage.getItem('karakterPazari_cooldown');
-      if (!expireTime) return;
+    function checkQuizCooldown() {
+      const expireTime = localStorage.getItem('karakterPazari_quizCooldown');
+      if (!expireTime) {
+        quizCooldownBox.style.display = 'none';
+        quizContent.style.display = 'block';
+        updateQuizAttemptsDisplay();
+        return;
+      }
 
       const remaining = parseInt(expireTime, 10) - Date.now();
       if (remaining > 0) {
-        showCooldownView(true);
-        startCooldownTimer(remaining);
-      } else {
-        localStorage.removeItem('karakterPazari_cooldown');
-        showCooldownView(false);
-      }
-    }
-
-    function showCooldownView(isActive) {
-      if (isActive) {
-        cooldownBox.style.display = 'block';
+        quizCooldownBox.style.display = 'block';
         quizContent.style.display = 'none';
-        gameContent.style.display = 'none';
+        startQuizTimer(remaining);
       } else {
-        cooldownBox.style.display = 'none';
-        if (tabQuiz.classList.contains('active')) quizContent.style.display = 'block';
-        else gameContent.style.display = 'block';
+        localStorage.removeItem('karakterPazari_quizCooldown');
+        quizPlays = 0;
+        localStorage.setItem('karakterPazari_quizPlays', '0');
+        quizCooldownBox.style.display = 'none';
+        quizContent.style.display = 'block';
+        updateQuizAttemptsDisplay();
       }
     }
 
-    function startCooldownTimer(durationMs) {
-      clearInterval(cooldownInterval);
-
+    function startQuizTimer(durationMs) {
+      clearInterval(quizInterval);
       function tick() {
-        const remaining = parseInt(localStorage.getItem('karakterPazari_cooldown') || '0', 10) - Date.now();
+        const remaining = parseInt(localStorage.getItem('karakterPazari_quizCooldown') || '0', 10) - Date.now();
         if (remaining <= 0) {
-          clearInterval(cooldownInterval);
-          localStorage.removeItem('karakterPazari_cooldown');
-          showCooldownView(false);
-          quizQuestionsAnsweredInRound = 0;
-          startMemoryGame();
-          showToast('Oyun hakkın yenilendi! Tekrar oynayabilirsin.', 'success');
+          clearInterval(quizInterval);
+          localStorage.removeItem('karakterPazari_quizCooldown');
+          quizPlays = 0;
+          localStorage.setItem('karakterPazari_quizPlays', '0');
+          quizCooldownBox.style.display = 'none';
+          quizContent.style.display = 'block';
+          updateQuizAttemptsDisplay();
+          showToast('Bilgi Yarışması hakların yenilendi! (6/6)', 'success');
           return;
         }
-
         const mins = Math.floor(remaining / 60000);
         const secs = Math.floor((remaining % 60000) / 1000);
-        cooldownTimer.innerText = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        quizCooldownTimer.innerText = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+      }
+      tick();
+      quizInterval = setInterval(tick, 1000);
+    }
+
+    // Hafıza Oyunu Cooldown
+    function triggerGameCooldown() {
+      const expireTime = Date.now() + COOLDOWN_MINUTES * 60 * 1000;
+      localStorage.setItem('karakterPazari_gameCooldown', expireTime);
+      checkGameCooldown();
+    }
+
+    function checkGameCooldown() {
+      const expireTime = localStorage.getItem('karakterPazari_gameCooldown');
+      if (!expireTime) {
+        gameCooldownBox.style.display = 'none';
+        gameContent.style.display = 'block';
+        updateGameAttemptsDisplay();
+        return;
       }
 
+      const remaining = parseInt(expireTime, 10) - Date.now();
+      if (remaining > 0) {
+        gameCooldownBox.style.display = 'block';
+        gameContent.style.display = 'none';
+        startGameTimer(remaining);
+      } else {
+        localStorage.removeItem('karakterPazari_gameCooldown');
+        gamePlays = 0;
+        localStorage.setItem('karakterPazari_gamePlays', '0');
+        gameCooldownBox.style.display = 'none';
+        gameContent.style.display = 'block';
+        updateGameAttemptsDisplay();
+      }
+    }
+
+    function startGameTimer(durationMs) {
+      clearInterval(gameInterval);
+      function tick() {
+        const remaining = parseInt(localStorage.getItem('karakterPazari_gameCooldown') || '0', 10) - Date.now();
+        if (remaining <= 0) {
+          clearInterval(gameInterval);
+          localStorage.removeItem('karakterPazari_gameCooldown');
+          gamePlays = 0;
+          localStorage.setItem('karakterPazari_gamePlays', '0');
+          gameCooldownBox.style.display = 'none';
+          gameContent.style.display = 'block';
+          updateGameAttemptsDisplay();
+          startMemoryGame();
+          showToast('Hafıza Oyunu hakların yenilendi! (6/6)', 'success');
+          return;
+        }
+        const mins = Math.floor(remaining / 60000);
+        const secs = Math.floor((remaining % 60000) / 1000);
+        gameCooldownTimer.innerText = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+      }
       tick();
-      cooldownInterval = setInterval(tick, 1000);
+      gameInterval = setInterval(tick, 1000);
+    }
+
+    function updateQuizAttemptsDisplay() {
+      const remaining = Math.max(0, MAX_ATTEMPTS - quizPlays);
+      quizAttemptsLeft.innerText = `Hak: ${remaining}/${MAX_ATTEMPTS}`;
+    }
+
+    function updateGameAttemptsDisplay() {
+      const remaining = Math.max(0, MAX_ATTEMPTS - gamePlays);
+      gameAttemptsLeft.innerText = `Hak: ${remaining}/${MAX_ATTEMPTS}`;
     }
 
     // Sekmeler
     tabQuiz.addEventListener('click', () => {
       tabQuiz.classList.add('active');
       tabGame.classList.remove('active');
-      if (!localStorage.getItem('karakterPazari_cooldown')) {
-        quizContent.style.display = 'block';
-        gameContent.style.display = 'none';
-      }
+      quizWrapper.style.display = 'block';
+      gameWrapper.style.display = 'none';
     });
 
     tabGame.addEventListener('click', () => {
       tabGame.classList.add('active');
       tabQuiz.classList.remove('active');
-      if (!localStorage.getItem('karakterPazari_cooldown')) {
-        gameContent.style.display = 'block';
-        quizContent.style.display = 'none';
-      }
+      gameWrapper.style.display = 'block';
+      quizWrapper.style.display = 'none';
     });
 
     // ==========================================
-    // 6. QUIZ MANTIĞI
+    // 6. QUIZ MANTIĞI (6 Hak)
     // ==========================================
     function loadQuestion() {
       const q = questions[currentQuestionIndex];
@@ -609,6 +711,7 @@
       quizFeedback.innerText = '';
       nextBtn.style.display = 'none';
       optionsContainer.innerHTML = '';
+      updateQuizAttemptsDisplay();
 
       q.options.forEach((opt, idx) => {
         const btn = document.createElement('button');
@@ -636,14 +739,17 @@
         quizFeedback.innerText = '❌ Yanlış cevap!';
       }
 
-      quizQuestionsAnsweredInRound++;
+      quizPlays++;
+      localStorage.setItem('karakterPazari_quizPlays', quizPlays);
+      updateQuizAttemptsDisplay();
+
       nextBtn.style.display = 'inline-block';
     }
 
     nextBtn.addEventListener('click', () => {
-      if (quizQuestionsAnsweredInRound >= 2) {
-        showToast('Quiz turu bitti! 15 dakika dinlenme süresi başladı.');
-        triggerCooldown();
+      if (quizPlays >= MAX_ATTEMPTS) {
+        showToast('6 Quiz hakkın doldu! 15 dakika bekleme süresi başladı.');
+        triggerQuizCooldown();
         return;
       }
       currentQuestionIndex = (currentQuestionIndex + 1) % questions.length;
@@ -651,7 +757,7 @@
     });
 
     // ==========================================
-    // 7. HAFIZA OYUNU
+    // 7. HAFIZA OYUNU MANTIĞI (6 Hak)
     // ==========================================
     function startMemoryGame() {
       const pairSet = [...memoryEmojis, ...memoryEmojis].sort(() => Math.random() - 0.5);
@@ -662,6 +768,7 @@
       boardLocked = false;
       moveCounterEl.innerText = moveCount;
       matchCounterEl.innerText = matchedCount;
+      updateGameAttemptsDisplay();
       renderMemoryGrid();
     }
 
@@ -703,8 +810,18 @@
           if (matchedCount === memoryEmojis.length) {
             const reward = Math.max(20, 80 - moveCount * 3);
             addCoins(reward);
-            showToast(`Oyun bitti! +${reward} Coin kazandın. 15 dk bekleme başladı.`, 'success');
-            triggerCooldown();
+
+            gamePlays++;
+            localStorage.setItem('karakterPazari_gamePlays', gamePlays);
+            updateGameAttemptsDisplay();
+
+            if (gamePlays >= MAX_ATTEMPTS) {
+              showToast(`Tebrikler! +${reward} Coin. 6 hafıza oyunu hakkın bitti (15 dk bekleme başladı).`, 'success');
+              triggerGameCooldown();
+            } else {
+              showToast(`Tebrikler! +${reward} Coin kazandın. Yeni oyun hazırlanıyor...`, 'success');
+              setTimeout(startMemoryGame, 1500);
+            }
           }
         } else {
           setTimeout(() => {
