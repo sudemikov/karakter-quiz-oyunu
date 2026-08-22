@@ -148,16 +148,36 @@
     .quiz-feedback { min-height: 18px; font-size: 0.85rem; font-weight: bold; margin-bottom: 6px; }
     .next-btn { background: var(--accent); color: #0f172a; border: none; font-weight: bold; padding: 6px 14px; border-radius: 5px; cursor: pointer; font-size: 0.85rem; display: none; }
 
-    /* Hafıza Oyunu */
-    .game-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-size: 0.8rem; color: var(--text-muted); }
+    /* Hafıza Oyunu (Kompakt ve Dengeli Boyut) */
+    .game-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 0.8rem; color: var(--text-muted); }
     .game-meta strong { color: var(--text); }
-    .memory-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 10px; }
+    
+    .memory-grid { 
+      display: grid; 
+      grid-template-columns: repeat(4, 70px); 
+      gap: 8px; 
+      margin: 6px 0 10px;
+      justify-content: start;
+    }
+    @media (max-width: 480px) {
+      .memory-grid { grid-template-columns: repeat(4, 1fr); justify-content: stretch; }
+    }
     
     .memory-card {
-      aspect-ratio: 1 / 1; border-radius: 6px; border: 1px solid var(--border);
-      background: var(--card-inner); display: flex; align-items: center; justify-content: center;
-      font-size: 1.4rem; cursor: pointer; user-select: none; transition: transform 0.2s, background 0.2s;
+      width: 100%;
+      height: 70px;
+      border-radius: 6px; 
+      border: 1px solid var(--border);
+      background: var(--card-inner); 
+      display: flex; 
+      align-items: center; 
+      justify-content: center;
+      font-size: 1.4rem; 
+      cursor: pointer; 
+      user-select: none; 
+      transition: transform 0.2s, background 0.2s;
     }
+    .memory-card:hover:not(.flipped):not(.matched) { border-color: var(--accent); }
     .memory-card.flipped, .memory-card.matched { background: #263349; }
     .memory-card.matched { border-color: var(--success); opacity: 0.75; cursor: default; }
 
@@ -169,7 +189,6 @@
     }
     .search-input:focus { border-color: var(--accent); }
     
-    /* Taşmayı engelleyen çoklu satır sarma (wrap) */
     .category-pills { 
       display: flex; 
       flex-wrap: wrap; 
