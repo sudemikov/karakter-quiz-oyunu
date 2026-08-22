@@ -19,7 +19,6 @@
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-
     body { background: var(--bg); color: var(--text); padding: 20px; min-height: 100vh; }
 
     header {
@@ -27,6 +26,8 @@
       padding: 1.2rem 2rem; background: var(--card-bg); border-radius: 12px;
       margin-bottom: 20px; border: 1px solid var(--border);
     }
+
+    .user-badge { font-weight: bold; color: var(--accent); display: flex; align-items: center; gap: 8px; font-size: 1.05rem; }
 
     .coin-display {
       font-size: 1.3rem; font-weight: 800; color: var(--accent-gold);
@@ -36,161 +37,164 @@
     }
     .coin-display.bump { transform: scale(1.12); }
 
-    .container { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
+    .container { display: grid; grid-template-columns: 2fr 1.1fr; gap: 20px; }
+    @media (max-width: 960px) { .container { grid-template-columns: 1fr; } }
 
-    @media (max-width: 900px) { .container { grid-template-columns: 1fr; } }
+    .section-title { font-size: 1.25rem; margin-bottom: 15px; color: var(--accent); display: flex; align-items: center; gap: 8px; }
 
-    .section-title { font-size: 1.3rem; margin-bottom: 15px; color: var(--accent); display: flex; align-items: center; gap: 8px; }
-
-    /* --- Kazanç Kutusu (Quiz + Oyun) --- */
-    .earn-box {
-      background: var(--card-bg); padding: 25px; border-radius: 12px;
-      margin-bottom: 25px; border: 1px solid var(--border);
+    /* Auth Modal */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(4px);
+      display: flex; align-items: center; justify-content: center; z-index: 1000;
     }
+    .modal-card {
+      background: var(--card-bg); border: 1px solid var(--border); padding: 30px;
+      border-radius: 16px; width: 90%; max-width: 420px; text-align: center;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+    .modal-card input {
+      width: 100%; padding: 12px 16px; background: var(--card-inner); border: 1px solid var(--border);
+      color: var(--text); border-radius: 8px; margin: 15px 0 10px; font-size: 1rem; outline: none;
+    }
+    .modal-card input:focus { border-color: var(--accent); }
+    .modal-err { color: var(--danger); font-size: 0.85rem; margin-bottom: 15px; min-height: 20px; text-align: left; }
 
+    /* Kazanç Paneli & Cooldown */
+    .earn-box { background: var(--card-bg); padding: 25px; border-radius: 12px; margin-bottom: 25px; border: 1px solid var(--border); position: relative; }
     .mode-tabs { display: flex; gap: 8px; margin-bottom: 18px; border-bottom: 1px solid var(--border); }
     .mode-tab {
       background: transparent; border: none; color: var(--text-muted);
-      padding: 10px 6px; font-size: 0.95rem; font-weight: 700; cursor: pointer;
+      padding: 10px 16px; font-size: 0.95rem; font-weight: 700; cursor: pointer;
       border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all 0.15s;
     }
-    .mode-tab:hover { color: var(--text); }
     .mode-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+    .cooldown-overlay {
+      background: rgba(15, 23, 42, 0.94); border-radius: 10px; border: 1px solid var(--accent-gold);
+      padding: 30px 20px; text-align: center; margin-top: 10px;
+    }
+    .timer-text { font-size: 2rem; font-weight: 900; color: var(--accent-gold); margin: 12px 0; letter-spacing: 2px; }
 
     .quiz-header { display: flex; justify-content: space-between; font-size: 0.85rem; color: var(--accent); margin-bottom: 10px; text-transform: uppercase; font-weight: bold; }
     .quiz-question { font-size: 1.15rem; font-weight: 600; margin-bottom: 20px; line-height: 1.4; }
-
-    .options-grid {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
-      margin-bottom: 15px;
-    }
-
+    .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
     @media (max-width: 600px) { .options-grid { grid-template-columns: 1fr; } }
-
     .option-btn {
       background: var(--card-inner); color: var(--text); border: 1px solid var(--border);
-      padding: 12px 16px; border-radius: 8px; font-size: 0.95rem; cursor: pointer;
-      text-align: left; transition: all 0.2s;
+      padding: 12px 16px; border-radius: 8px; font-size: 0.95rem; cursor: pointer; text-align: left; transition: all 0.2s;
     }
-
     .option-btn:hover:not(:disabled) { background: #334155; border-color: var(--accent); }
     .option-btn.correct { background: var(--success); color: #000; font-weight: bold; }
     .option-btn.wrong { background: var(--danger); color: #fff; font-weight: bold; }
-
     .quiz-feedback { min-height: 24px; font-size: 0.95rem; font-weight: bold; margin-bottom: 12px; }
+    .next-btn { background: var(--accent); color: #0f172a; border: none; font-weight: bold; padding: 10px 20px; border-radius: 6px; cursor: pointer; display: none; }
 
-    .next-btn, .newgame-btn {
-      background: var(--accent); color: #0f172a; border: none; font-weight: bold;
-      padding: 10px 20px; border-radius: 6px; cursor: pointer; display: none;
-    }
-
-    /* --- Hafıza Oyunu --- */
+    /* Hafıza Oyunu */
     .game-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; font-size: 0.9rem; color: var(--text-muted); }
     .game-meta strong { color: var(--text); }
-
-    .memory-grid {
-      display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 16px;
-    }
+    .memory-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 16px; }
     @media (max-width: 480px) { .memory-grid { grid-template-columns: repeat(3, 1fr); } }
-
     .memory-card {
       aspect-ratio: 1 / 1; border-radius: 10px; border: 1px solid var(--border);
       background: var(--card-inner); display: flex; align-items: center; justify-content: center;
-      font-size: 1.8rem; cursor: pointer; user-select: none;
-      transition: transform 0.25s, background 0.2s, border-color 0.2s;
+      font-size: 1.8rem; cursor: pointer; user-select: none; transition: transform 0.25s, background 0.2s;
     }
-    .memory-card:hover:not(.flipped):not(.matched) { border-color: var(--accent); }
     .memory-card.flipped, .memory-card.matched { background: #263349; }
     .memory-card.matched { border-color: var(--success); opacity: 0.75; cursor: default; }
-    .memory-card .face-down { color: var(--text-muted); font-size: 1.3rem; }
 
-    .game-result {
-      background: rgba(34, 197, 94, 0.12); border: 1px solid var(--success);
-      color: var(--success); padding: 12px 16px; border-radius: 8px; font-weight: bold;
-      margin-bottom: 14px; display: none;
-    }
-
-    /* --- Market Kartları --- */
-    .market-grid {
-      display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
-      gap: 16px;
-    }
-
-    .character-card {
-      background: var(--card-bg); border-radius: 12px; overflow: hidden;
-      border: 1px solid var(--border); display: flex; flex-direction: column;
-      transition: transform 0.2s, border-color 0.2s;
-      position: relative;
-    }
-
-    .character-card:hover { transform: translateY(-4px); border-color: var(--accent); }
-
-    .card-img-wrap {
-      width: 100%; height: 260px; background-color: #0b1120;
-      display: flex; align-items: center; justify-content: center;
-      position: relative; overflow: hidden;
-    }
-
+    /* Market */
+    .market-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 16px; }
+    .character-card { background: var(--card-bg); border-radius: 12px; overflow: hidden; border: 1px solid var(--border); display: flex; flex-direction: column; }
+    .card-img-wrap { width: 100%; height: 240px; background-color: #0b1120; display: flex; align-items: center; justify-content: center; overflow: hidden; }
     .card-img { width: 100%; height: 100%; object-fit: cover; }
     .card-placeholder { font-size: 3.5rem; }
-
-    .card-info { padding: 15px; flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; }
+    .card-info { padding: 14px; flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; }
     .char-source { font-size: 0.75rem; color: var(--accent); text-transform: uppercase; font-weight: bold; margin-bottom: 4px; }
-    .char-name { font-size: 1.15rem; font-weight: bold; margin-bottom: 2px; }
-    .char-role { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 12px; }
-    .char-price { font-size: 1.1rem; color: var(--accent-gold); font-weight: bold; margin-bottom: 12px; text-align: center; }
+    .char-name { font-size: 1.1rem; font-weight: bold; }
+    .char-role { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 10px; }
+    .char-price { font-size: 1.05rem; color: var(--accent-gold); font-weight: bold; margin-bottom: 10px; text-align: center; }
 
     .btn { width: 100%; padding: 10px; border-radius: 6px; border: none; font-weight: bold; cursor: pointer; transition: opacity 0.2s; }
     .btn-buy { background: #334155; color: var(--text); }
     .btn-buy:hover:not(:disabled) { background: var(--accent); color: #0f172a; }
     .btn-buy:disabled { opacity: 0.5; cursor: not-allowed; }
 
-    /* --- Sidebar Panelleri --- */
+    /* Sidebar & Leaderboard */
     .sidebar { display: flex; flex-direction: column; gap: 20px; }
     .panel { background: var(--card-bg); padding: 20px; border-radius: 12px; border: 1px solid var(--border); }
-    .cart-list, .inventory-list { list-style: none; margin-bottom: 15px; max-height: 220px; overflow-y: auto; }
+    .cart-list, .inventory-list { list-style: none; margin-bottom: 15px; max-height: 180px; overflow-y: auto; }
     .cart-item, .inventory-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
-    .btn-checkout { background: var(--success); color: #0f172a; font-size: 1rem; }
-    .btn-remove { background: none; border: none; color: var(--danger); cursor: pointer; font-size: 1.1rem; }
+    .btn-checkout { background: var(--success); color: #0f172a; }
+    .btn-remove { background: none; border: none; color: var(--danger); cursor: pointer; }
 
-    /* --- Toast bildirimleri --- */
-    #toast-stack {
-      position: fixed; top: 20px; right: 20px; display: flex; flex-direction: column;
-      gap: 10px; z-index: 999;
-    }
+    .leaderboard-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+    .leaderboard-table th { text-align: left; color: var(--text-muted); padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+    .leaderboard-table td { padding: 10px 4px; border-bottom: 1px solid rgba(51, 65, 85, 0.5); }
+    .leaderboard-table tr.current-user { background: rgba(56, 189, 248, 0.12); font-weight: bold; color: var(--accent); }
+    .rank-num { font-weight: 800; width: 30px; }
+    .rank-1 { color: #facc15; }
+    .rank-2 { color: #cbd5e1; }
+    .rank-3 { color: #b45309; }
+
+    /* Toast */
+    #toast-stack { position: fixed; top: 20px; right: 20px; display: flex; flex-direction: column; gap: 10px; z-index: 2000; }
     .toast {
       background: var(--card-bg); border: 1px solid var(--border); border-left: 4px solid var(--accent);
       color: var(--text); padding: 12px 16px; border-radius: 8px; font-size: 0.9rem;
-      box-shadow: 0 6px 18px rgba(0,0,0,0.35);
-      animation: toast-in 0.2s ease-out, toast-out 0.3s ease-in 2.7s forwards;
-      max-width: 280px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.35); animation: toast-in 0.2s ease-out, toast-out 0.3s ease-in 2.7s forwards;
     }
     .toast.success { border-left-color: var(--success); }
     .toast.error { border-left-color: var(--danger); }
     @keyframes toast-in { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
     @keyframes toast-out { to { opacity: 0; transform: translateX(20px); } }
   </style>
+
+  <!-- Firebase App & Firestore Compatibility SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 </head>
 <body>
 
   <div id="toast-stack"></div>
 
+  <!-- Kayıt Modalı -->
+  <div class="modal-overlay" id="auth-modal" style="display:none;">
+    <div class="modal-card">
+      <h2 style="color: var(--accent); margin-bottom: 8px;">🏒 Oyuncu Kaydı</h2>
+      <p style="color: var(--text-muted); font-size: 0.9rem;">Pazara katılmak ve global sıralamada yer almak için benzersiz bir kullanıcı adı seç.</p>
+      <input type="text" id="username-input" placeholder="Kullanıcı adın..." maxlength="15" autocomplete="off">
+      <div class="modal-err" id="modal-err"></div>
+      <button class="btn btn-checkout" id="start-btn">Koleksiyona Başla</button>
+    </div>
+  </div>
+
   <header>
-    <h1>🏒 Karakter Koleksiyonu</h1>
+    <div>
+      <h1 style="font-size: 1.4rem;">🏒 Karakter Pazarı</h1>
+      <div class="user-badge" id="user-badge-display">👤 Yükleniyor...</div>
+    </div>
     <div class="coin-display" id="coin-display">🪙 <span id="coin-counter">0</span> Coin</div>
   </header>
 
   <div class="container">
     <main>
-      <!-- Coin Kazanma Alanı: Quiz + Mini Oyun -->
+      <!-- Kazanç Paneli -->
       <div class="earn-box">
         <div class="mode-tabs">
           <button class="mode-tab active" id="tab-quiz">🧠 Bilgi Yarışması</button>
           <button class="mode-tab" id="tab-game">🎴 Hafıza Oyunu</button>
         </div>
 
+        <!-- Cooldown Kutusu -->
+        <div class="cooldown-overlay" id="cooldown-box" style="display:none;">
+          <h3 style="color: var(--accent-gold);">⏳ Enerjin Tükendi!</h3>
+          <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 4px;">Yeni oyun hakkı için dinleniyorsun. Kalan süre:</p>
+          <div class="timer-text" id="cooldown-timer">15:00</div>
+          <p style="color: var(--text-muted); font-size: 0.85rem;">Süre bitene kadar marketi gezebilir ve alışveriş yapabilirsin.</p>
+        </div>
+
         <!-- Quiz Paneli -->
-        <div id="quiz-panel">
+        <div id="quiz-content">
           <div class="quiz-header">
             <span id="quiz-category">Off-Campus Quiz</span>
             <span>Ödül: +25 Coin</span>
@@ -198,22 +202,20 @@
           <div class="quiz-question" id="quiz-question">Soru yükleniyor...</div>
           <div class="options-grid" id="options-container"></div>
           <div class="quiz-feedback" id="quiz-feedback"></div>
-          <button class="next-btn" id="next-btn">Sonraki Soruya Geç ➔</button>
+          <button class="next-btn" id="next-btn">Sonraki Soru ➔</button>
         </div>
 
         <!-- Hafıza Oyunu Paneli -->
-        <div id="game-panel" style="display:none;">
+        <div id="game-content" style="display:none;">
           <div class="quiz-header">
             <span>Kartları Eşleştir</span>
-            <span>Az hamlede bitir, çok coin kazan</span>
+            <span>Ödül: Az hamlede yüksek kazanç</span>
           </div>
           <div class="game-meta">
             <span>Hamle: <strong id="move-counter">0</strong></span>
             <span>Eşleşen: <strong id="match-counter">0</strong>/6</span>
           </div>
-          <div class="game-result" id="game-result"></div>
           <div class="memory-grid" id="memory-grid"></div>
-          <button class="newgame-btn" id="newgame-btn" style="display:inline-block;">🔄 Yeni Oyun</button>
         </div>
       </div>
 
@@ -223,6 +225,23 @@
     </main>
 
     <aside class="sidebar">
+      <!-- Canlı Firebase Liderlik Tablosu -->
+      <div class="panel">
+        <h2 class="section-title">🏆 Global Sıralama</h2>
+        <table class="leaderboard-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Oyuncu</th>
+              <th style="text-align: right;">Karakter</th>
+            </tr>
+          </thead>
+          <tbody id="leaderboard-body">
+            <tr><td colspan="3" style="text-align:center; color:var(--text-muted);">Sıralama yükleniyor...</td></tr>
+          </tbody>
+        </table>
+      </div>
+
       <!-- Sepet -->
       <div class="panel">
         <h2 class="section-title">🛒 Sepet</h2>
@@ -247,12 +266,30 @@
   </div>
 
   <script>
-    // --- OYUN & MARKET VERİSİ ---
+    // ==========================================
+    // 1. FIREBASE BAĞLANTISI
+    // ==========================================
+    const firebaseConfig = {
+      apiKey: "AIzaSyB-G5LG9H2c_CffEKeUK08TROjYGbtQI78",
+      authDomain: "karakter-pazari.firebaseapp.com",
+      projectId: "karakter-pazari",
+      storageBucket: "karakter-pazari.firebasestorage.app",
+      messagingSenderId: "895251651659",
+      appId: "1:895251651659:web:1d79ff644badb6c14741ce"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    // ==========================================
+    // 2. STATE & UYGULAMA DEĞİŞKENLERİ
+    // ==========================================
+    const COOLDOWN_MINUTES = 15;
+    let currentUser = null;
     let coins = 0;
     let cart = [];
     let inventory = [];
 
-    // Quiz Soruları (Off Campus & Popüler Kültür)
     const questions = [
       {
         category: "Off Campus / The Deal",
@@ -262,39 +299,24 @@
       },
       {
         category: "Off Campus / The Deal",
-        question: "Garrett, hangi dersi geçmek ve takımda kalmak için Hannah Wells'ten özel ders ister?",
+        question: "Garrett, hangi dersi geçmek ve takımda kalmak için Hannah'dan özel ders ister?",
         options: ["Felsefe", "Tarih", "Mikroiktisat", "Biyoloji"],
         correct: 0
       },
       {
         category: "Off Campus / The Deal",
-        question: "Hannah'nın üniversitedeki ana eğitim/bölüm alanı nedir?",
+        question: "Hannah'nın üniversitedeki ana bölüm alanı nedir?",
         options: ["Hukuk", "Müzik / Klasik Kompozisyon", "Edebiyat", "Spor Yönetimi"],
         correct: 1
       },
       {
         category: "Off Campus / The Score",
-        question: "Dean Di Laurentis ile Allie Hayes arasındaki hikayeyi anlatan serinin 3. kitabı hangisidir?",
+        question: "Dean Di Laurentis ile Allie Hayes arasındaki hikayeyi anlatan kitap hangisidir?",
         options: ["The Mistake", "The Goal", "The Score", "The Legacy"],
         correct: 2
-      },
-      {
-        category: "Dizi & Popüler Kültür",
-        question: "Harry Potter serisinde Gryffindor binasının simgesi hangi hayvandır?",
-        options: ["Porsuk", "Yılan", "Kartal", "Aslan"],
-        correct: 3
-      },
-      {
-        category: "Dizi & Popüler Kültür",
-        question: "The Witcher serisinde Geralt of Rivia'nın lakaplarından biri nedir?",
-        options: ["Blaviken Kasabı", "Kış Muhafızı", "Gölge Lordu", "Ejderha Katili"],
-        correct: 0
       }
     ];
 
-    let currentQuestionIndex = 0;
-
-    // Karakterler (Görsel URL'lerini istediğin gibi doldurabilirsin)
     const characters = [
       { id: 1, source: "Off Campus", name: "Garrett Graham", role: "Briar Hokey Kaptanı (#1)", price: 50, emoji: "🏒", image: "garrettgraham.jpg" },
       { id: 2, source: "Off Campus", name: "John Logan", role: "Hokey Oyuncusu", price: 50, emoji: "🏒", image: "johnlogan.jpg" },
@@ -302,32 +324,191 @@
       { id: 4, source: "Off Campus", name: "John Tucker", role: "Hokey Oyuncusu", price: 50, emoji: "🏒", image: "tuckeroffcampus.jpg" }
     ];
 
-    // --- DOM ELEMENTLERİ ---
+    let currentQuestionIndex = 0;
+    let quizQuestionsAnsweredInRound = 0;
+
+    const memoryEmojis = ['🏒', '📚', '⚡', '🐺', '🎭', '🔥'];
+    let memoryDeck = [];
+    let flippedCards = [];
+    let matchedCount = 0;
+    let moveCount = 0;
+    let boardLocked = false;
+    let cooldownInterval = null;
+
+    // DOM Elementleri
+    const authModal = document.getElementById('auth-modal');
+    const usernameInput = document.getElementById('username-input');
+    const modalErr = document.getElementById('modal-err');
+    const startBtn = document.getElementById('start-btn');
+    const userBadgeDisplay = document.getElementById('user-badge-display');
+
     const coinDisplay = document.getElementById('coin-display');
     const coinCounter = document.getElementById('coin-counter');
+    const cooldownBox = document.getElementById('cooldown-box');
+    const cooldownTimer = document.getElementById('cooldown-timer');
+    const quizContent = document.getElementById('quiz-content');
+    const gameContent = document.getElementById('game-content');
+    const tabQuiz = document.getElementById('tab-quiz');
+    const tabGame = document.getElementById('tab-game');
+
     const quizCategory = document.getElementById('quiz-category');
     const quizQuestion = document.getElementById('quiz-question');
     const optionsContainer = document.getElementById('options-container');
     const quizFeedback = document.getElementById('quiz-feedback');
     const nextBtn = document.getElementById('next-btn');
 
+    const memoryGrid = document.getElementById('memory-grid');
+    const moveCounterEl = document.getElementById('move-counter');
+    const matchCounterEl = document.getElementById('match-counter');
+
     const marketContainer = document.getElementById('market-container');
     const cartList = document.getElementById('cart-list');
     const cartTotal = document.getElementById('cart-total');
     const checkoutBtn = document.getElementById('checkout-btn');
     const inventoryList = document.getElementById('inventory-list');
+    const leaderboardBody = document.getElementById('leaderboard-body');
 
-    const tabQuiz = document.getElementById('tab-quiz');
-    const tabGame = document.getElementById('tab-game');
-    const quizPanel = document.getElementById('quiz-panel');
-    const gamePanel = document.getElementById('game-panel');
+    // ==========================================
+    // 3. FIREBASE KULLANICI KONTROLÜ & OTURUM
+    // ==========================================
+    async function checkAuth() {
+      const savedUser = localStorage.getItem('karakterPazari_user');
+      if (savedUser) {
+        currentUser = savedUser;
+        userBadgeDisplay.innerText = `👤 ${currentUser}`;
+        
+        try {
+          const doc = await db.collection("users").doc(currentUser.toLowerCase()).get();
+          if (doc.exists) {
+            const data = doc.data();
+            coins = data.coins || 0;
+            inventory = data.inventory || [];
+          }
+        } catch (e) {
+          console.error("Firestore kullanıcı verisi çekilemedi:", e);
+        }
 
-    // --- TOAST BİLDİRİMLERİ (alert() yerine) ---
-    function showToast(message, type = 'info') {
+        initApp();
+      } else {
+        authModal.style.display = 'flex';
+      }
+    }
+
+    startBtn.addEventListener('click', registerUser);
+    usernameInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') registerUser(); });
+
+    async function registerUser() {
+      const name = usernameInput.value.trim();
+      modalErr.innerText = '';
+
+      if (!name || name.length < 3) {
+        modalErr.innerText = 'Kullanıcı adı en az 3 karakter olmalıdır.';
+        return;
+      }
+
+      startBtn.disabled = true;
+      startBtn.innerText = 'Kontrol ediliyor...';
+
+      try {
+        const userDocRef = db.collection("users").doc(name.toLowerCase());
+        const userDoc = await userDocRef.get();
+
+        if (userDoc.exists) {
+          modalErr.innerText = 'Bu kullanıcı adı daha önce başka biri tarafından alınmış!';
+          startBtn.disabled = false;
+          startBtn.innerText = 'Koleksiyona Başla';
+          return;
+        }
+
+        await userDocRef.set({
+          displayName: name,
+          coins: 0,
+          inventoryCount: 0,
+          inventory: [],
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+      } catch (err) {
+        console.error(err);
+        modalErr.innerText = 'Veritabanı bağlantı hatası! Firestore kurallarını test moduna aldığından emin ol.';
+        startBtn.disabled = false;
+        startBtn.innerText = 'Koleksiyona Başla';
+        return;
+      }
+
+      currentUser = name;
+      localStorage.setItem('karakterPazari_user', currentUser);
+      coins = 0;
+      inventory = [];
+
+      userBadgeDisplay.innerText = `👤 ${currentUser}`;
+      authModal.style.display = 'none';
+      showToast(`Hoş geldin, ${currentUser}!`, 'success');
+      initApp();
+    }
+
+    function initApp() {
+      listenLeaderboard();
+      checkCooldown();
+      loadQuestion();
+      startMemoryGame();
+      updateUI();
+    }
+
+    // ==========================================
+    // 4. FIREBASE REALTIME LİDERLİK TABLOSU
+    // ==========================================
+    function listenLeaderboard() {
+      db.collection("users")
+        .orderBy("inventoryCount", "desc")
+        .limit(10)
+        .onSnapshot((snapshot) => {
+          leaderboardBody.innerHTML = '';
+          let idx = 1;
+
+          snapshot.forEach((doc) => {
+            const player = doc.data();
+            const isMe = currentUser && (player.displayName.toLowerCase() === currentUser.toLowerCase());
+            
+            const tr = document.createElement('tr');
+            if (isMe) tr.className = 'current-user';
+
+            let rankBadge = `${idx}`;
+            if (idx === 1) rankBadge = `<span class="rank-1">🥇 1</span>`;
+            else if (idx === 2) rankBadge = `<span class="rank-2">🥈 2</span>`;
+            else if (idx === 3) rankBadge = `<span class="rank-3">🥉 3</span>`;
+
+            tr.innerHTML = `
+              <td class="rank-num">${rankBadge}</td>
+              <td>${player.displayName} ${isMe ? '(Sen)' : ''}</td>
+              <td style="text-align: right; font-weight:bold;">${player.inventoryCount || 0}</td>
+            `;
+            leaderboardBody.appendChild(tr);
+            idx++;
+          });
+        }, (error) => {
+          console.error("Liderlik tablosu dinlenemedi:", error);
+        });
+    }
+
+    async function syncUserData() {
+      if (!currentUser) return;
+      try {
+        await db.collection("users").doc(currentUser.toLowerCase()).update({
+          coins: coins,
+          inventory: inventory,
+          inventoryCount: inventory.length
+        });
+      } catch (err) {
+        console.error("Veri senkronizasyonu başarısız:", err);
+      }
+    }
+
+    // Toast
+    function showToast(msg, type = 'info') {
       const stack = document.getElementById('toast-stack');
       const el = document.createElement('div');
       el.className = `toast ${type}`;
-      el.innerText = message;
+      el.innerText = msg;
       stack.appendChild(el);
       setTimeout(() => el.remove(), 3000);
     }
@@ -336,25 +517,91 @@
       coins += amount;
       coinDisplay.classList.add('bump');
       setTimeout(() => coinDisplay.classList.remove('bump'), 150);
+      syncUserData();
       updateUI();
     }
 
-    // --- SEKME GEÇİŞİ (Quiz <-> Hafıza Oyunu) ---
+    // ==========================================
+    // 5. 15 DAKİKA COOLDOWN
+    // ==========================================
+    function triggerCooldown() {
+      const expireTime = Date.now() + COOLDOWN_MINUTES * 60 * 1000;
+      localStorage.setItem('karakterPazari_cooldown', expireTime);
+      checkCooldown();
+    }
+
+    function checkCooldown() {
+      const expireTime = localStorage.getItem('karakterPazari_cooldown');
+      if (!expireTime) return;
+
+      const remaining = parseInt(expireTime, 10) - Date.now();
+      if (remaining > 0) {
+        showCooldownView(true);
+        startCooldownTimer(remaining);
+      } else {
+        localStorage.removeItem('karakterPazari_cooldown');
+        showCooldownView(false);
+      }
+    }
+
+    function showCooldownView(isActive) {
+      if (isActive) {
+        cooldownBox.style.display = 'block';
+        quizContent.style.display = 'none';
+        gameContent.style.display = 'none';
+      } else {
+        cooldownBox.style.display = 'none';
+        if (tabQuiz.classList.contains('active')) quizContent.style.display = 'block';
+        else gameContent.style.display = 'block';
+      }
+    }
+
+    function startCooldownTimer(durationMs) {
+      clearInterval(cooldownInterval);
+
+      function tick() {
+        const remaining = parseInt(localStorage.getItem('karakterPazari_cooldown') || '0', 10) - Date.now();
+        if (remaining <= 0) {
+          clearInterval(cooldownInterval);
+          localStorage.removeItem('karakterPazari_cooldown');
+          showCooldownView(false);
+          quizQuestionsAnsweredInRound = 0;
+          startMemoryGame();
+          showToast('Oyun hakkın yenilendi! Tekrar oynayabilirsin.', 'success');
+          return;
+        }
+
+        const mins = Math.floor(remaining / 60000);
+        const secs = Math.floor((remaining % 60000) / 1000);
+        cooldownTimer.innerText = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+      }
+
+      tick();
+      cooldownInterval = setInterval(tick, 1000);
+    }
+
+    // Sekmeler
     tabQuiz.addEventListener('click', () => {
       tabQuiz.classList.add('active');
       tabGame.classList.remove('active');
-      quizPanel.style.display = 'block';
-      gamePanel.style.display = 'none';
+      if (!localStorage.getItem('karakterPazari_cooldown')) {
+        quizContent.style.display = 'block';
+        gameContent.style.display = 'none';
+      }
     });
 
     tabGame.addEventListener('click', () => {
       tabGame.classList.add('active');
       tabQuiz.classList.remove('active');
-      gamePanel.style.display = 'block';
-      quizPanel.style.display = 'none';
+      if (!localStorage.getItem('karakterPazari_cooldown')) {
+        gameContent.style.display = 'block';
+        quizContent.style.display = 'none';
+      }
     });
 
-    // --- QUIZ MANTIĞI ---
+    // ==========================================
+    // 6. QUIZ MANTIĞI
+    // ==========================================
     function loadQuestion() {
       const q = questions[currentQuestionIndex];
       quizCategory.innerText = q.category;
@@ -372,67 +619,49 @@
       });
     }
 
-    function selectAnswer(selectedIdx) {
+    function selectAnswer(idx) {
       const q = questions[currentQuestionIndex];
       const buttons = optionsContainer.querySelectorAll('.option-btn');
+      buttons.forEach(b => b.disabled = true);
 
-      buttons.forEach(btn => btn.disabled = true);
-
-      if (selectedIdx === q.correct) {
-        buttons[selectedIdx].classList.add('correct');
+      if (idx === q.correct) {
+        buttons[idx].classList.add('correct');
         addCoins(25);
         quizFeedback.style.color = 'var(--success)';
-        quizFeedback.innerText = '🎉 Harika! Doğru cevap (+25 Coin)';
+        quizFeedback.innerText = '🎉 Doğru cevap (+25 Coin)';
       } else {
-        buttons[selectedIdx].classList.add('wrong');
+        buttons[idx].classList.add('wrong');
         buttons[q.correct].classList.add('correct');
         quizFeedback.style.color = 'var(--danger)';
-        quizFeedback.innerText = '❌ Yanlış cevap! Doğru olan işaretlendi.';
+        quizFeedback.innerText = '❌ Yanlış cevap!';
       }
 
+      quizQuestionsAnsweredInRound++;
       nextBtn.style.display = 'inline-block';
     }
 
     nextBtn.addEventListener('click', () => {
+      if (quizQuestionsAnsweredInRound >= 2) {
+        showToast('Quiz turu bitti! 15 dakika dinlenme süresi başladı.');
+        triggerCooldown();
+        return;
+      }
       currentQuestionIndex = (currentQuestionIndex + 1) % questions.length;
       loadQuestion();
     });
 
-    // --- HAFIZA OYUNU MANTIĞI ---
-    const memoryEmojis = ['🏒', '📚', '⚡', '🐺', '🎭', '🔥'];
-    const memoryGrid = document.getElementById('memory-grid');
-    const moveCounterEl = document.getElementById('move-counter');
-    const matchCounterEl = document.getElementById('match-counter');
-    const gameResultEl = document.getElementById('game-result');
-    const newGameBtn = document.getElementById('newgame-btn');
-
-    let memoryDeck = [];
-    let flippedCards = [];
-    let matchedCount = 0;
-    let moveCount = 0;
-    let boardLocked = false;
-
-    function shuffle(arr) {
-      const a = [...arr];
-      for (let i = a.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [a[i], a[j]] = [a[j], a[i]];
-      }
-      return a;
-    }
-
+    // ==========================================
+    // 7. HAFIZA OYUNU
+    // ==========================================
     function startMemoryGame() {
-      const pairSet = shuffle([...memoryEmojis, ...memoryEmojis]);
+      const pairSet = [...memoryEmojis, ...memoryEmojis].sort(() => Math.random() - 0.5);
       memoryDeck = pairSet.map((emoji, idx) => ({ id: idx, emoji, flipped: false, matched: false }));
       flippedCards = [];
       matchedCount = 0;
       moveCount = 0;
       boardLocked = false;
-
       moveCounterEl.innerText = moveCount;
       matchCounterEl.innerText = matchedCount;
-      gameResultEl.style.display = 'none';
-
       renderMemoryGrid();
     }
 
@@ -441,9 +670,7 @@
       memoryDeck.forEach(card => {
         const el = document.createElement('div');
         el.className = 'memory-card' + (card.flipped ? ' flipped' : '') + (card.matched ? ' matched' : '');
-        el.innerHTML = (card.flipped || card.matched)
-          ? card.emoji
-          : '<span class="face-down">?</span>';
+        el.innerHTML = (card.flipped || card.matched) ? card.emoji : '<span style="color:var(--text-muted); font-size:1.3rem;">?</span>';
         el.onclick = () => flipCard(card.id);
         memoryGrid.appendChild(el);
       });
@@ -474,7 +701,10 @@
           renderMemoryGrid();
 
           if (matchedCount === memoryEmojis.length) {
-            finishMemoryGame();
+            const reward = Math.max(20, 80 - moveCount * 3);
+            addCoins(reward);
+            showToast(`Oyun bitti! +${reward} Coin kazandın. 15 dk bekleme başladı.`, 'success');
+            triggerCooldown();
           }
         } else {
           setTimeout(() => {
@@ -488,19 +718,9 @@
       }
     }
 
-    function finishMemoryGame() {
-      // Az hamleyle bitirince daha çok coin: 6 hamlede tavan ödül, her fazla hamlede azalır.
-      const perfectMoves = memoryEmojis.length; // 6
-      const reward = Math.max(15, 80 - (moveCount - perfectMoves) * 4);
-      gameResultEl.style.display = 'block';
-      gameResultEl.innerText = `🏆 Tebrikler! ${moveCount} hamlede bitirdin. +${reward} Coin kazandın!`;
-      addCoins(reward);
-      showToast(`Hafıza oyunu tamamlandı: +${reward} Coin`, 'success');
-    }
-
-    newGameBtn.addEventListener('click', startMemoryGame);
-
-    // --- MARKET MANTIĞI ---
+    // ==========================================
+    // 8. MARKET & SEPET İŞLEMLERİ
+    // ==========================================
     function renderMarket() {
       marketContainer.innerHTML = '';
       characters.forEach(char => {
@@ -532,7 +752,6 @@
       });
     }
 
-    // --- SEPET ---
     window.addToCart = function(id) {
       const char = characters.find(c => c.id === id);
       if (!cart.some(item => item.id === id) && !inventory.some(item => item.id === id)) {
@@ -547,29 +766,27 @@
       updateUI();
     };
 
-    checkoutBtn.addEventListener('click', () => {
+    checkoutBtn.addEventListener('click', async () => {
       const total = cart.reduce((sum, item) => sum + item.price, 0);
-
-      if (cart.length === 0) {
-        showToast('Sepetiniz boş!', 'error');
-        return;
-      }
+      if (cart.length === 0) return showToast('Sepetiniz boş!', 'error');
 
       if (coins >= total) {
         coins -= total;
         inventory.push(...cart);
         cart = [];
-        showToast('Karakterler koleksiyonuna katıldı! 🎉', 'success');
+        
+        await syncUserData();
+        showToast('Karakterler koleksiyonuna eklendi! 🎉', 'success');
         updateUI();
       } else {
         showToast(`Yetersiz Coin! ${total} Coin gerekiyor.`, 'error');
       }
     });
 
-    // --- UI GÜNCELLEME ---
     function updateUI() {
       coinCounter.innerText = coins;
 
+      // Sepet
       cartList.innerHTML = cart.length === 0 ? '<li style="color: var(--text-muted); font-size: 0.85rem;">Sepetiniz boş.</li>' : '';
       let total = 0;
       cart.forEach(item => {
@@ -587,6 +804,7 @@
       });
       cartTotal.innerText = `${total} Coin`;
 
+      // Koleksiyon
       inventoryList.innerHTML = inventory.length === 0 ? '<li style="color: var(--text-muted); font-size: 0.85rem;">Henüz bir karakter almadın.</li>' : '';
       inventory.forEach(item => {
         const li = document.createElement('li');
@@ -598,10 +816,8 @@
       renderMarket();
     }
 
-    // Başlangıç Yüklemesi
-    loadQuestion();
-    startMemoryGame();
-    updateUI();
+    // Uygulamayı Başlat
+    checkAuth();
   </script>
 </body>
 </html>
